@@ -475,117 +475,26 @@ elseif ($_REQUEST['act'] == 'add' || $_REQUEST['act'] == 'edit' || $_REQUEST['ac
 //--  库存管理
 /*------------------------------------------------------ */
 
-elseif($_REQUEST['act'] == 'stock')
+elseif($_REQUEST['act'] == 'stock_in')
 {
-	print_r($_POST);print('<br />');
-	print_r($_SESSION); 
-	
-	if(count($_POST) != 0)
-	{
-		//进货数据处理
-		if($_POST['general-table'] == 'general-table')
-		{
-			$sql_get_goods  = " update ".$ecs->table('goods')." set ";
-			$sql_get_goods .= " goods_number = goods_number + ".$_POST['purchases_number'];
-			$sql_get_goods .= " where goods_id = ".$_POST['goods_id'];
-			if($_POST['goods_id'] != '')
-			{
-				if($_POST['purchases_number'] != 0)
-				{
-					//$db->query($sql_get_goods);
-					echo $sql_get_goods;
-				}
-				else
-				{
-					echo '进货数量为0，不更新';
-				}
-			}
-			else
-			{
-				die('GOODS_ID IS NULL');
-			}
-		}
-		
-		//退货数据处理
-		if($_POST['detail-table'] == 'detail-table')
-		{
-			
-		}
-		
-		//盘点数据处理
-		if($_POST['mix-table'] == 'mix-table')
-		{
-			if($_POST['goods_sn'] != '')
-			{
-				if($_POST['inventory_loss_num'] != 0)
-				{
-					$sql_update_goods_num  = " update ".$ecs->table('goods')." set ";
-					$sql_update_goods_num .= " goods_number = goods_number - ".$_POST['inventory_loss_num'];
-					$sql_update_goods_num .= " where goods_sn_1 = ".$_POST['goods_sn'];	
-					print($sql_update_goods_num);
-					$rs=$db->query($sql_update_goods_num);
-					if(!$rs)
-					{
-						die('SQL执行错误：'.$rs->error());
-					}
-					echo '有损耗盘点操作成功！';
-				}
-				else
-				{
-					echo '无损耗盘点操作成功！';
-				}
-			}
-			else
-			{
-				die('操作失败');
-			}
-		}
-		
-		//日结数据处理
-		if($_POST['properties-table'] == 'properties-table')
-		{
-			$sql_update_goods_number  = " update ".$ecs->table('goods');
-			$sql_update_goods_number .= " set goods_number = goods_number + ".$_POST['cur_in_stock_num'];
-			$sql_update_goods_number .= " - ".$_POST['cur_in_stock_num']." where goods_id = ".$_POST['goods_id'];
-			if($_POST['goods_id'] != '')
-			{
-				if($_POST['cur_in_stock_num'] == '' && $_POST['cur_out_stock_num'] == '')
-				{
-					
-				}
-				else
-				{
-					//$db->query($sql_update_goods_number);
-					echo $sql_update_goods_number;
-				}
-			}
-			else
-			{
-				die('GOODS_ID　IS NULL');
-			}
-		}
-		
-		//进销存报表数据处理
-		if($_POST['gallery-table'] == 'gallery-table')
-		{
-			echo '进销';
-		}
-	}
-	//进货
-	$goods_stock = get_stock();
-	$smarty->assign('goods_stock',$goods_stock);
-	//退货
-	$goods_return_stock = get_return_stock();
-	$smarty->assign('goods_return_stock',$goods_return_stock);
-	//盘点
-	$get_stock_count = get_stock_count();
-	$smarty->assign('goods_stock_count',   $get_stock_count['goods']);
-    $smarty->assign('record_count', $get_stock_count['record_count']);
-    $smarty->assign('page_count',   $get_stock_count['page_count']);
-	
-	$smarty->display('stock.htm');
+	$smarty->display("stock_in.htm");
 }
-
+elseif($_REQUEST['act'] == 'stock_out')
+{
+	$smarty->display("stock_out.htm");
+}
+elseif($_REQUEST['act'] == 'stock_check')
+{
+	$smarty->display("stock_check.htm");
+}
+elseif($_REQUEST['act'] == 'stock_count')
+{
+	$smarty->display("stock_count.htm");
+}
+elseif($_REQUEST['act'] == 'stock_report')
+{
+	$smarty->display("stock_report.htm");
+}
 
 
 /*------------------------------------------------------ */
