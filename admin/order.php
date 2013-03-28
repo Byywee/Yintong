@@ -1235,7 +1235,7 @@ elseif ($_REQUEST['act'] == 'back_info')
 
     /* 显示模板 */
     $smarty->assign('ur_here', $_LANG['back_operate'] . $_LANG['detail']);
-    $smarty->assign('action_link', array('href' => 'order.php?act=back_list&' . list_link_postfix(), 'text' => $_LANG['10_back_order']));
+    $smarty->assign('action_link', array('href' => 'order.php?act=back_list', 'text' => $_LANG['10_back_order']));
     assign_query_info();
     $smarty->display('back_info.htm');
     exit; //

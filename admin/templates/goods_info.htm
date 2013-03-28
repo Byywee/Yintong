@@ -2,6 +2,52 @@
 {include file="pageheader.htm"}
 {insert_scripts files="../js/utils.js,selectzone.js,colorselector.js"}
 <script type="text/javascript" src="../js/calendar.php?lang={$cfg_lang}"></script>
+<script type="text/javascript">
+function give_integral(){
+var shop_price = document.getElementById("shop_price");
+var give_integral_per = document.getElementById("give_integral_per");
+
+give_integral_per.addEventListener("input",webChange,false);
+
+function webChange(){
+if(give_integral_per.value){document.getElementById("give_integral").value = parseInt(give_integral_per.value * shop_price.value * 0.01)};
+}
+}
+
+
+
+function rank_integral(){
+	var shop_price = document.getElementById("shop_price");
+	var rank_integral_per = document.getElementById("rank_integral_per");
+
+	rank_integral_per.addEventListener("input",webChange,false);
+
+	function webChange(){
+	if(rank_integral_per.value){document.getElementById("rank_integral").value =parseInt( rank_integral_per.value * shop_price.value * 0.01)};
+	}
+	}
+function limitvalue(){
+	
+	var input_value = document.getElementById("give_integral_per");
+	var input_value1 = document.getElementById("give_integral");
+	if(input_value.value>100)
+		{
+		
+		input_value.value   = 0;
+		input_value1.value  = 0;
+		alert('值不能大于100 ！，请重新输入！');
+		input_value.focus();
+		}
+	if(input_value.value<0)
+	{
+	
+	input_value.value   = 0;
+	input_value1.value  = 0;
+	alert('值不能小于0 ！，请重新输入！');
+	input_value.focus();
+	}
+}
+</script>
 <link href="../js/calendar/calendar.css" rel="stylesheet" type="text/css" />
 
 {if $warning}
@@ -97,7 +143,7 @@
          {/if}
           <tr>
             <td class="label">{$lang.lab_shop_price}</td>
-            <td><input type="text" name="shop_price" value="{$goods.shop_price}" size="20" onblur="priceSetted()"/>
+            <td><input type="text" name="shop_price" id="shop_price" value="{$goods.shop_price}" size="20" onblur="priceSetted()"/>
             <input type="button" value="{$lang.compute_by_mp}" onclick="marketPriceSetted()" />
             {$lang.require_field}</td>
           </tr>
@@ -115,7 +161,7 @@
           </tr>
           {/if}
 
-          <!--鍟嗗搧浼樻儬浠锋�?->
+          <!--鍟嗗搧浼樻儬浠锋�?->
           <tr>
             <td class="label"><a href="javascript:showNotice('volumePrice');" title="{$lang.form_notice}"><img src="images/notice.gif" width="16" height="16" border="0" alt="{$lang.form_notice}"></a>{$lang.lab_volume_price}</td>
             <td>
@@ -137,17 +183,17 @@
               <span class="notice-span" {if $help_open}style="display:block" {else} style="display:none" {/if} id="volumePrice">{$lang.notice_volume_price}</span>
             </td>
           </tr>
-          <!--鍟嗗搧浼樻儬浠锋�?end -->
+          <!--鍟嗗搧浼樻儬浠锋�?end -->
 			<tr>
-          	<td class="label">{$lang.lab_return_deadline}</td>
+          	<td class="label">{$lang.lab_return_able_date}</td>
           	<td>
-          	<select name="sale_return_deadline" id="sale_return_deadline">
+          	<select name="sale_return_able_date" id="sale_return_able_date">
 	          	<option value="0">{$lang.please_choose}</option>
-	          	<option value="oneweek" {if $goods.sale_return_deadline eq 'oneweek'}selected = "selected"{/if}> &nbsp; {$lang.return_deadline_oneweek}</option>
-	          	<option value="onemonth" {if $goods.sale_return_deadline eq 'onemonth'}selected = "selected"{/if}> &nbsp; {$lang.return_deadline_onemonth}</option>
-	          	<option value="threemonths" {if $goods.sale_return_deadline eq 'threemonths'}selected = "selected"{/if}> &nbsp; {$lang.return_deadline_threemonths}</option>
-	          	<option value="sixmonths" {if $goods.sale_return_deadline eq 'sixmonths'}selected = "selected"{/if}> &nbsp; {$lang.return_deadline_sixmonths}</option>
-	          	<option value="oneyear" {if $goods.sale_return_deadline eq 'oneyear'}selected = "selected"{/if}> &nbsp; {$lang.return_deadline_oneyear}</option>
+	          	<option value="oneweek" {if $goods.sale_return_able_date eq 'oneweek'}selected = "selected"{/if}> &nbsp; {$lang.return_able_date_oneweek}</option>
+	          	<option value="onemonth" {if $goods.sale_return_able_date eq 'onemonth'}selected = "selected"{/if}> &nbsp; {$lang.return_able_date_onemonth}</option>
+	          	<option value="threemonths" {if $goods.sale_return_able_date eq 'threemonths'}selected = "selected"{/if}> &nbsp; {$lang.return_able_date_threemonths}</option>
+	          	<option value="sixmonths" {if $goods.sale_return_able_date eq 'sixmonths'}selected = "selected"{/if}> &nbsp; {$lang.return_able_date_sixmonths}</option>
+	          	<option value="oneyear" {if $goods.sale_return_able_date eq 'oneyear'}selected = "selected"{/if}> &nbsp; {$lang.return_able_date_oneyear}</option>
           	</select>
           	</td>
           </tr>
@@ -159,13 +205,22 @@
           </tr>
           <tr>
             <td class="label"><a href="javascript:showNotice('giveIntegral');" title="{$lang.form_notice}"><img src="images/notice.gif" width="16" height="16" border="0" alt="{$lang.form_notice}"></a> {$lang.lab_give_integral}</td>
-	    	   <td><input type="text" name="give_integral" value="{$goods.give_integral}" size="20" />
-			  <input type="text" name="give_integral_per" value="{$goods.give_integral_per}" size="20" />%
+	    	   <td><input type="text" name="give_integral"  id="give_integral" value="{$goods.give_integral}" size="20" />
+	    	
+			  <input type="text" name="give_integral_per"  id="give_integral_per" value="{$goods.give_integral_per}" onBlur="limitvalue()" size="20" />%
+			    <script type="text/javascript">
+			  give_integral();
+</script>
             <br /><span class="notice-span" {if $help_open}style="display:block" {else} style="display:none" {/if} id="giveIntegral">{$lang.notice_give_integral}</span></td>
           </tr>
           <tr>
-            <td class="label"><a href="javascript:showNotice('rankIntegral');" title="{$lang.form_notice}"><img src="images/notice.gif" width="16" height="16" border="0" alt="{$lang.form_notice}"></a> {$lang.lab_rank_integral}</td>	        <td><input type="text" name="rank_integral" value="{$goods.rank_integral}" size="20" />
-			   <input type="text" name="rank_integral_per" value="{$goods.rank_integral_per}" size="20" />%
+            <td class="label"><a href="javascript:showNotice('rankIntegral');" title="{$lang.form_notice}"><img src="images/notice.gif" width="16" height="16" border="0" alt="{$lang.form_notice}"></a> {$lang.lab_rank_integral}</td>	   
+                 <td><input type="text" name="rank_integral" id="rank_integral" value="{$goods.rank_integral}" size="20" />
+                 
+			   <input type="text" name="rank_integral_per" id="rank_integral_per" value="{$goods.rank_integral_per}" size="20" />%
+			   <script type="text/javascript">
+			   rank_integral();
+</script>
             <br /><span class="notice-span" {if $help_open}style="display:block" {else} style="display:none" {/if} id="rankIntegral">{$lang.notice_rank_integral}</span></td>
           </tr>
           <tr>
@@ -231,8 +286,8 @@
           <tr>
             <td class="label"><a href="javascript:showNotice('noticeStorage');" title="{$lang.form_notice}"><img src="images/notice.gif" width="16" height="16" border="0" alt="{$lang.form_notice}"></a> {$lang.lab_goods_number}</td>
 <!--            <td><input type="text" name="goods_number" value="{$goods.goods_number}" size="20" {if $code neq '' || $goods._attribute neq ''}readonly="readonly"{/if} /><br />-->
-            <td><input type="text" name="goods_number" value="{$goods.goods_number}" size="20" /><br />
-            <span class="notice-span" {if $help_open}style="display:block" {else} style="display:none" {/if} id="noticeStorage">{$lang.notice_storage}</span></td>
+            <td><span>{$goods.goods_number}</span><br />
+            </td>
           </tr>
           <tr>
             <td class="label">{$lang.lab_warn_number}</td>
@@ -271,7 +326,7 @@
           </tr>
         </table>
 
-        <!-- 灞炴€т笌瑙勬�?-->
+        <!-- 灞炴€т笌瑙勬�?-->
         {if $goods_type_list}
         <table width="90%" id="properties-table" style="display:none" align="center">
           <tr>
@@ -291,7 +346,7 @@
 
         <!-- 鍟嗗搧鐩稿唽 -->
         <table width="90%" id="gallery-table" style="display:none" align="center">
-          <!-- 鍥剧墖鍒楄�?-->
+          <!-- 鍥剧墖鍒楄�?-->
           <tr>
             <td>
               {foreach from=$img_list item=img key=i}
@@ -330,7 +385,7 @@
                 onclick="searchGoods(sz1, 'cat_id1','brand_id1','keyword1')" />
             </td>
           </tr>
-          <!-- 鍟嗗搧鍒楄�?-->
+          <!-- 鍟嗗搧鍒楄�?-->
           <tr>
             <th>{$lang.all_goods}</th>
             <th>{$lang.handler}</th>
@@ -358,7 +413,7 @@
           </tr>
         </table>
 
-        <!-- 閰嶄�?-->
+        <!-- 閰嶄�?-->
         <table width="90%" id="groupgoods-table" style="display:none" align="center">
           <!-- 鍟嗗搧鎼滅储 -->
           <tr>
@@ -370,7 +425,7 @@
               <input type="button" value="{$lang.button_search}" onclick="searchGoods(sz2, 'cat_id2', 'brand_id2', 'keyword2')" class="button" />
             </td>
           </tr>
-          <!-- 鍟嗗搧鍒楄�?-->
+          <!-- 鍟嗗搧鍒楄�?-->
           <tr>
             <th>{$lang.all_goods}</th>
             <th>{$lang.handler}</th>
@@ -407,7 +462,7 @@
               <input type="button" value="{$lang.button_search}" onclick="searchArticle()" class="button" />
             </td>
           </tr>
-          <!-- 鏂囩珷鍒楄�?-->
+          <!-- 鏂囩珷鍒楄�?-->
           <tr>
             <th>{$lang.all_article}</th>
             <th>{$lang.handler}</th>
@@ -525,7 +580,7 @@
 }
 
   /**
-   * 鍒囨崲鍟嗗搧绫诲�?
+   * 鍒囨崲鍟嗗搧绫诲�?
    */
   function getAttrList(goodsId)
   {
@@ -545,10 +600,10 @@
   }
 
   /**
-   * 鎸夋瘮渚�?绠椾环鏍
-   * @param   string  inputName   杈撳叆妗嗗悕�?
-   * @param   float   rate        姣斾�?
-   * @param   string  priceName   浠锋牸杈撳叆妗嗗悕绉帮紙濡傛灉娌℃湁锛屽彇shop_price�?
+   * 鎸夋瘮渚�?绠椾环鏍
+   * @param   string  inputName   杈撳叆妗嗗悕�?
+   * @param   float   rate        姣斾�?
+   * @param   string  priceName   浠锋牸杈撳叆妗嗗悕绉帮紙濡傛灉娌℃湁锛屽彇shop_price�?
    */
   function computePrice(inputName, rate, priceName)
   {
@@ -577,7 +632,7 @@
   }
 
   /**
-   * 璁剧疆浜嗕竴�?晢鍝佷环鏍硷紝鏀瑰彉甯傚満浠锋牸銆佺Н鍒嗕互鍙婁細鍛樹环�?
+   * 璁剧疆浜嗕竴�?晢鍝佷环鏍硷紝鏀瑰彉甯傚満浠锋牸銆佺Н鍒嗕互鍙婁細鍛樹环�?
    */
   function priceSetted()
   {
@@ -621,7 +676,7 @@
   }
 
   /**
-   * 鏍规嵁甯傚満浠锋牸锛�?绠楀苟鏀瑰彉鍟嗗簵浠锋牸銆佺Н鍒嗕互鍙婁細鍛樹环鏍
+   * 鏍规嵁甯傚満浠锋牸锛�?绠楀苟鏀瑰彉鍟嗗簵浠锋牸銆佺Н鍒嗕互鍙婁細鍛樹环鏍
    */
   function marketPriceSetted()
   {
@@ -635,7 +690,7 @@
   }
 
   /**
-   * 鏂板?涓€�??�?
+   * 鏂板?涓€�??�?
    */
   function addSpec(obj)
   {
@@ -653,7 +708,7 @@
   }
 
   /**
-   * 鍒犻櫎瑙勬牸�?
+   * 鍒犻櫎瑙勬牸�?
    */
   function removeSpec(obj)
   {
@@ -682,7 +737,7 @@
               }
 
               var hiddenSpec = document.getElementById('hidden_' + element.id);
-              hiddenSpec.value = value.join(String.fromCharCode(13)); // 鐢ㄥ洖杞﹂敭闅斿紑姣忎釜瑙勬�?
+              hiddenSpec.value = value.join(String.fromCharCode(13)); // 鐢ㄥ洖杞﹂敭闅斿紑姣忎釜瑙勬�?
           }
       }
       return true;
@@ -702,7 +757,7 @@
   }
 
   /**
-   * �?€熸坊鍔犲搧�?
+   * �?€熸坊鍔犲搧�?
    */
   function rapidBrandAdd(conObj)
   {
@@ -922,7 +977,7 @@
   }
 
   /**
-   * 娣诲姞鎵╁睍鍒嗙�?
+   * 娣诲姞鎵╁睍鍒嗙�?
    */
   function addOtherCat(conObj)
   {
@@ -948,7 +1003,7 @@
       sel.onChange = function() {checkIsLeaf(this);};
   }
 
-  /* 鍏宠仈鍟嗗搧鍑芥�?*/
+  /* 鍏宠仈鍟嗗搧鍑芥�?*/
   function searchGoods(szObject, catId, brandId, keyword)
   {
       var filters = new Object;
@@ -962,7 +1017,7 @@
   }
 
   /**
-   * 鍏宠仈鏂囩珷鍑芥�?
+   * 鍏宠仈鏂囩珷鍑芥�?
    */
   function searchArticle()
   {
@@ -974,7 +1029,7 @@
   }
 
   /**
-   * 鏂板?涓€�?浘鐗
+   * 鏂板?涓€�?浘鐗
    */
   function addImg(obj)
   {
@@ -987,7 +1042,7 @@
   }
 
   /**
-   * 鍒犻櫎鍥剧墖涓婁�?
+   * 鍒犻櫎鍥剧墖涓婁�?
    */
   function removeImg(obj)
   {
@@ -1020,14 +1075,16 @@
   {
     document.forms['theForm'].elements['market_price'].value = parseInt(document.forms['theForm'].elements['market_price'].value);
   }
-
+  
+  
    /**
-   * 灏嗙Н鍒嗚喘涔�?搴﹀彇鏁
+   * 灏嗙Н鍒嗚喘涔�?搴﹀彇鏁
    */
   function parseint_integral()
   {
     document.forms['theForm'].elements['integral'].value = parseInt(document.forms['theForm'].elements['integral'].value);
   }
+   
 
 
   /**
@@ -1057,7 +1114,7 @@
   }
 
   /**
-   * 鏂板?涓€�?紭鎯犱环�?
+   * 鏂板?涓€�?紭鎯犱环�?
    */
   function addVolumePrice(obj)
   {
@@ -1083,7 +1140,7 @@
   }
 
   /**
-   * 鍒犻櫎浼樻儬浠锋�?
+   * 鍒犻櫎浼樻儬浠锋�?
    */
   function removeVolumePrice(obj)
   {
@@ -1094,7 +1151,7 @@
   }
 
   /**
-   * 鏍￠獙浼樻儬鏁版嵁鏄?惁姝ｇ�?
+   * 鏍￠獙浼樻儬鏁版嵁鏄?惁姝ｇ�?
    */
   function checkVolumeData(isSubmit,validator)
   {

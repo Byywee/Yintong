@@ -1,7 +1,10 @@
 <!-- $Id: goods_info.htm 17126 2010-04-23 10:30:26Z liuhui $ -->
+
+
 {include file="pageheader.htm"}
-{insert_scripts files="../js/utils.js,selectzone.js,colorselector.js"}
+{insert_scripts files="selectzone.js,colorselector.js"}
 {insert_scripts files="../js/utils.js,listtable.js"}
+
 <script type="text/javascript" src="../js/calendar.php?lang={$cfg_lang}"></script>
 <link href="../js/calendar/calendar.css" rel="stylesheet" type="text/css" />
 
@@ -47,7 +50,7 @@
     <tr>
       <th>
         <input onclick='listTable.selectAll(this, "checkboxes")' type="checkbox" />
-        <a href="javascript:listTable.sort('goods_id'); ">{$lang.record_id}</a>{$stock_goods_id}
+        <a href="javascript:listTable.sort('goods_id'); ">{$lang.record_id}</a>{$sort_goods_id}
       </th>
       <th><a href="javascript:listTable.sort('goods_name'); ">{$lang.goods_name}</a>{$sort_goods_name}</th>
    	  <th><a href="javascript:listTable.sort('goods_sn'); ">{$lang.goods_sn}</a>{$sort_goods_sn}</th>
@@ -58,12 +61,12 @@
     </tr>
     {foreach from=$goods_stock item=stock}
     <tr style="text-align:center">
-      <td><input type="checkbox" name="checkboxes[]" value="{$stock.goods_id}" />{$stock.goods_id}</td>
+     <td><input type="checkbox" name="checkboxes[]" value="{$stock.goods_id}" />{$stock.goods_id}</td>
       <td class="first-cell">{$stock.goods_name}</td>
       <td>{$stock.goods_sn}</td>
       <td>{$stock.shop_price}</td>
       <td>{$stock.goods_number}</td>
-      <td><input type="text" name="goods_Retail" value=""/></td>
+      <td><input type="text" name="goods_Retail_{$stock.goods_id}" value=""/></td>
     </tr>
     {/foreach}
     {if $use_storage}
@@ -111,12 +114,12 @@
     </tr>
     {foreach from=$goods_return_stock item=return_stock}
     <tr style="text-align:center">
-      <td><input type="checkbox" name="checkboxes[]" value="{$stock.goods_id}" />{$return_stock.goods_id}</td>
+      <td><input type="checkbox" name="checkboxes[]" value="{$return_stock.goods_id}" />{$return_stock.goods_id}</td>
       <td class="first-cell">{$return_stock.goods_name}</td>
       <td>{$return_stock.goods_sn}</td>
       <td>{$return_stock.shop_price}</td>
       <td>{$return_stock.goods_number}</td>
-      <td><input type="text" name="return_goods" value=""/></td>
+      <td><input type="text" name="return_goods_{$stock.goods_id}" value=""/></td>
       <td>{$return_stock.integral}</td>
     </tr>
     {/foreach}
@@ -170,17 +173,17 @@
       <td class="first-cell">{$goods.goods_name|escape:html|truncate:35}</td>
       <td>{$goods.goods_number|escape:html}</td>
       <td align="center">
-	  	<input type="text" name="fact_stock_num_{$goods.goods_id}" id="fact_stock_num_{$goods.goods_id}" onblur="get_loss_num(this.id);" size="3" maxlength="5" value="0"/>
-		<script type="text/javascript" language="javascript">
-	  		function get_loss_num(str)
-			{
-				document.getElementById("loss_num_{$goods.goods_id}").value = {$goods.goods_number} - parseInt(document.getElementById(str).value);
-			}
-	  	</script>
+	  	<input type="text" name="fact_stock_num_{$goods.goods_id}" id="fact_stock_num_{$goods.goods_id}" onkeyup="get_loss_num(this.id);" size="3" maxlength="5" value="0"/>
 	  </td>
 	  <td align="center">
 	  	<input type="text" id="loss_num_{$goods.goods_id}" name="loss_num_{$goods.goods_id}" value="0" size="3" maxlength="5" readonly="true" />
 	  </td>
+	  <script type="text/javascript" language="javascript">
+	  		function get_loss_num(str)
+			{
+				document.getElementById("loss_num_{$goods.goods_id}").value = {$goods.goods_number} - parseInt(document.getElementById(str).value);
+			}
+	  </script>
       <td align="center"><textarea id="loss_note_{$goods.goods_id}" name="loss_note_{$goods.goods_id}" style="width:100px; height:20px;"></textarea></td>
       <td align="center">
         <a href="message.php?act=view&id={$msg.message_id}" title="{$lang.view_msg}">{$lang.view}</a>
