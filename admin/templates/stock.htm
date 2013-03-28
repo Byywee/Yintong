@@ -1,0 +1,362 @@
+<!-- $Id: goods_info.htm 17126 2010-04-23 10:30:26Z liuhui $ -->
+{include file="pageheader.htm"}
+{insert_scripts files="../js/utils.js,selectzone.js,colorselector.js"}
+{insert_scripts files="../js/utils.js,listtable.js"}
+<script type="text/javascript" src="../js/calendar.php?lang={$cfg_lang}"></script>
+<link href="../js/calendar/calendar.css" rel="stylesheet" type="text/css" />
+
+{if $warning}
+<ul style="padding:0; margin: 0; list-style-type:none; color: #CC0000;">
+  <li style="border: 1px solid #CC0000; background: #FFFFCC; padding: 10px; margin-bottom: 5px;" >{$warning}</li>
+</ul>
+{/if}
+
+<!-- start goods form -->
+<div class="tab-div">
+    <!-- tab bar -->
+    <div id="tabbar-div">
+      <p>
+        <span class="tab-front" id="general-tab">{$lang.lab_stock}</span><span
+        class="tab-back" id="detail-tab">{$lang.lab_return_goods}</span><span
+        class="tab-back" id="mix-tab">{$lang.lab_check}</span><span
+        class="tab-back" id="properties-tab">{$lang.lab_rose}</span><span
+        class="tab-back" id="gallery-tab">{$lang.lab_report}</span>
+      </p>
+    </div>
+
+    <!-- tab body -->
+    <div id="tabbody-div">
+      
+        <!-- 鏈€澶ф枃浠堕檺鍒 -->
+        <input type="hidden" name="MAX_FILE_SIZE" value="2097152" />
+        <!-- 閫氱敤淇℃伅 -->
+        <table width="100%" id="general-table" style="display:table" align="center">
+        <form action="" name="stockGoodSearch" method="post" enctype="multipart/form-data">
+		<tr> 
+  		  	<td>
+			<div class="form-div"><img src="images/icon_search.gif" width="26" height="22" border="0" alt="SEARCH" />
+    			{$lang.lab_stock_name}&nbsp;<select name="cat_id"><option value="0">{$lang.goods_cat}</option>{$cat_list}</select>&nbsp;<input type="text" name="keyword" />&nbsp;<input type="submit" class="Button" value="{$lang.button_search}" />
+  
+			</div>
+			</td>
+		  </tr>
+		  </form>
+		  <form enctype="multipart/form-data" action="goods.php?act=stock" method="post" name="generalForm" >
+ <tr><td ><div class="list-div" id="listDiv">
+  <table cellpadding="3" cellspacing="1">
+    <tr>
+      <th>
+        <input onclick='listTable.selectAll(this, "checkboxes")' type="checkbox" />
+        <a href="javascript:listTable.sort('goods_id'); ">{$lang.record_id}</a>{$stock_goods_id}
+      </th>
+      <th><a href="javascript:listTable.sort('goods_name'); ">{$lang.goods_name}</a>{$sort_goods_name}</th>
+   	  <th><a href="javascript:listTable.sort('goods_sn'); ">{$lang.goods_sn}</a>{$sort_goods_sn}</th>
+      <th><a href="javascript:listTable.sort('shop_price'); ">{$lang.shop_price}</a>{$sort_shop_price}</th>
+      <th><a href="javascript:listTable.sort('goods_number'); ">现有库存</a>{$goods_number}</th>
+      <th><a href="javascript:listTable.sort('goods_Retail'); ">进货量</a>{$goods_Retail}</th>
+     
+    </tr>
+    {foreach from=$goods_stock item=stock}
+    <tr style="text-align:center">
+      <td><input type="checkbox" name="checkboxes[]" value="{$stock.goods_id}" />{$stock.goods_id}</td>
+      <td class="first-cell">{$stock.goods_name}</td>
+      <td>{$stock.goods_sn}</td>
+      <td>{$stock.shop_price}</td>
+      <td>{$stock.goods_number}</td>
+      <td><input type="text" name="goods_Retail" value=""/></td>
+    </tr>
+    {/foreach}
+    {if $use_storage}
+    <th><a href="javascript:listTable.sort('goods_number'); ">{$lang.goods_number}</a>{$sort_goods_number}</th>
+    {/if}
+    <tr style="text-align:center">
+            <td calspan="7"><input type="submit" value="{$lang.button_submit}" class="button" /><input type="reset" value="{$lang.button_reset}" class="button" /></td>  
+          </tr>
+          </table>
+          </div></td></tr>
+ </form>
+  </table>
+ 
+  
+
+        <!-- 璇︾粏鎻忚堪 -->
+
+        <table width="100%" id="detail-table" style="display:none" align="center">
+        <tr><td><input type="hidden" name="detail-table" id="detail-table" value="detail-table"/></td></tr>
+           <form action="" name="stockGoodSearch" method="post" enctype="multipart/form-data">
+           <tr> 
+  		  	<td colspan="10">
+			<div class="form-div"><img src="images/icon_search.gif" width="26" height="22" border="0" alt="SEARCH" />
+    			{$lang.lab_stock_name}&nbsp;<select name="cat_id"><option value="0">{$lang.goods_cat}</option>{$cat_list}</select>&nbsp;<input type="text" name="keyword" />&nbsp;<input type="submit" class="Button" value="{$lang.button_search}" />
+  
+			</div>
+			</td>
+		  </tr>
+		  </form>
+		  <form enctype="multipart/form-data" action="goods.php?act=stock" method="post" name="detailForm" >
+ <tr><td ><div class="list-div" id="listDiv">
+  <table cellpadding="3" cellspacing="1">
+    <tr>
+      <th>
+        <input onclick='listTable.selectAll(this, "checkboxes")' type="checkbox" />
+        <a href="javascript:listTable.sort('goods_id'); ">{$lang.record_id}</a>{$stock_goods_id}
+      </th>
+      <th><a href="javascript:listTable.sort('goods_name'); ">{$lang.goods_name}</a>{$sort_goods_name}</th>
+   	  <th><a href="javascript:listTable.sort('goods_sn'); ">{$lang.goods_sn}</a>{$sort_goods_sn}</th>
+      <th><a href="javascript:listTable.sort('shop_price'); ">{$lang.shop_price}</a>{$sort_shop_price}</th>
+      <th><a href="javascript:listTable.sort('goods_number'); ">现有库存</a>{$goods_number}</th>
+      <th><a href="javascript:listTable.sort('return_goods'); ">退货量</a>{$return_goods}</th>
+      <th><a href="javascript:listTable.sort('integral'); ">积分</a>{$integral}</th>
+     
+    </tr>
+    {foreach from=$goods_return_stock item=return_stock}
+    <tr style="text-align:center">
+      <td><input type="checkbox" name="checkboxes[]" value="{$stock.goods_id}" />{$return_stock.goods_id}</td>
+      <td class="first-cell">{$return_stock.goods_name}</td>
+      <td>{$return_stock.goods_sn}</td>
+      <td>{$return_stock.shop_price}</td>
+      <td>{$return_stock.goods_number}</td>
+      <td><input type="text" name="return_goods" value=""/></td>
+      <td>{$return_stock.integral}</td>
+    </tr>
+    {/foreach}
+    {if $use_storage}
+    <th><a href="javascript:listTable.sort('goods_number'); ">{$lang.goods_number}</a>{$sort_goods_number}</th>
+    {/if}
+    <tr style="text-align:center">
+            <td calspan="7"><input type="submit" value="{$lang.button_submit}" class="button" /><input type="reset" value="{$lang.button_reset}" class="button" /></td>  
+          </tr>
+          </table>
+          </div></td></tr>
+ </form>
+        </table>
+       
+
+        <!-- 鍏朵粬淇℃伅 -->
+
+        <table width="100%" id="mix-table" style="display:none" align="center">
+		  <tr>
+		  	<td colspan="7"><div class="form-div">
+				<form action="" name="stockGoodSearch" method="post" enctype="multipart/form-data">
+						<img src="images/icon_search.gif" width="26" height="22" border="0" alt="SEARCH" />
+						<select name="cat_id"><option value="0">{$lang.goods_cat}</option>{$cat_list}</select>
+						<input type="text" name="start_time" maxlength="60" size="20" value="{$package.start_time}" readonly="readonly" id="start_time_id" />
+						<input name="selbtn1" type="button" id="selbtn1" onclick="return showCalendar('start_time_id', '%Y-%m-%d %H:%M', '24', false, 'selbtn1');" value="{$lang.btn_select}" class="button"/>
+						<input type="text" name="end_time" maxlength="60" size="20" value="{$package.end_time}"  readonly="readonly" id ="end_time_id" />
+						<input name="selbtn1" type="button" id="selbtn1" onclick="return showCalendar('end_time_id', '%Y-%m-%d %H:%M', '24', false, 'selbtn1');" value="{$lang.btn_select}" class="button"/>
+						<input type="submit" value="{$lang.button_search}" class="button" />
+				</form>
+</div>
+			</td>
+		  </tr>
+		  <form enctype="multipart/form-data" action="goods.php?act=stock" method="post" name="mixForm" >
+ <tr><td ><div class="list-div" id="listDiv">
+  <table cellpadding="3" cellspacing="1">
+    <tr>
+      <th>
+        <input onclick='listTable.selectAll(this, "checkboxes")' type="checkbox" />
+        <a href="javascript:listTable.sort('goods_id'); ">{$lang.record_id}</a>{$sort_message_id}
+      </th>
+      <th><a href="javascript:listTable.sort('goods_name'); ">{$lang.goods_name}</a>{$sort_goods_name}</th>
+   	  <th><a href="javascript:listTable.sort('info_stock'); ">账面库存</a>{$sort_shop_price}</th>
+      <th><a href="javascript:listTable.sort('fact_stock'); ">实际库存</a>{$sort_shop_price}</th>
+      <th><a href="javascript:listTable.sort('loss_num'); ">损耗数量</a>{$sort_shop_price}</th>
+      <th><a href="javascript:listTable.sort('loss_note'); ">损耗备注</a>{$sort_shop_price}</th>
+      <th>{$lang.handler}</th>
+    </tr>
+    {foreach from=$goods_stock_count item=goods}
+    <tr>
+      <td><input type="checkbox" name="checkboxes[]" value="{$goods.goods_id}" />{$goods.goods_id}</td>
+      <td class="first-cell">{$goods.goods_name|escape:html|truncate:35}</td>
+      <td>{$goods.goods_number|escape:html}</td>
+      <td align="center">
+	  	<input type="text" name="fact_stock_num_{$goods.goods_id}" id="fact_stock_num_{$goods.goods_id}" onblur="get_loss_num(this.id);" size="3" maxlength="5" value="0"/>
+		<script type="text/javascript" language="javascript">
+	  		function get_loss_num(str)
+			{
+				document.getElementById("loss_num_{$goods.goods_id}").value = {$goods.goods_number} - parseInt(document.getElementById(str).value);
+			}
+	  	</script>
+	  </td>
+	  <td align="center">
+	  	<input type="text" id="loss_num_{$goods.goods_id}" name="loss_num_{$goods.goods_id}" value="0" size="3" maxlength="5" readonly="true" />
+	  </td>
+      <td align="center"><textarea id="loss_note_{$goods.goods_id}" name="loss_note_{$goods.goods_id}" style="width:100px; height:20px;"></textarea></td>
+      <td align="center">
+        <a href="message.php?act=view&id={$msg.message_id}" title="{$lang.view_msg}">{$lang.view}</a>
+         <a href="javascript:;" onclick="listTable.remove({$msg.message_id}, '{$lang.drop_confirm}')">{$lang.remove}</a>
+      </td>
+    </tr>
+    {/foreach}
+	<tr style="text-align:right;">
+		<td colspan="7">{include file="page.htm"}</td>
+	</tr>
+    {if $use_storage}
+    <th><a href="javascript:listTable.sort('goods_number'); ">{$lang.goods_number}</a>{$sort_goods_number}</th>
+    {/if}
+    <tr style="text-align:center">
+            <td calspan="7"><input type="submit" value="{$lang.button_submit}" class="button" /><input type="reset" value="{$lang.button_reset}" class="button" /></td>  
+          </tr>
+          </table>
+          </div></td></tr>
+ </form>
+</table>
+        <!-- 灞炴€т笌瑙勬�?-->
+              
+        
+        <table width="100%" id="properties-table" style="display:none;" align="center">
+			        <tr><td><input type="hidden" name="properties-table" id="properties-table" value="properties-table"/></td></tr>
+			<tr>
+				<td colspan="7"><div class="form-div">
+					<form action="" name="stockGoodSearch" method="post" enctype="multipart/form-data">
+						<img src="images/icon_search.gif" width="26" height="22" border="0" alt="SEARCH" />
+						<select name="cat_id"><option value="0">{$lang.goods_cat}</option>{$cat_list}</select>
+						<input type="text" name="start_time" maxlength="60" size="20" value="{$package.start_time}" readonly="readonly" id="start_time_id" />
+						<input name="selbtn1" type="button" id="selbtn1" onclick="return showCalendar('start_time_id', '%Y-%m-%d %H:%M', '24', false, 'selbtn1');" value="{$lang.btn_select}" class="button"/>
+						<input type="text" name="end_time" maxlength="60" size="20" value="{$package.end_time}"  readonly="readonly" id ="end_time_id" />
+						<input name="selbtn1" type="button" id="selbtn1" onclick="return showCalendar('end_time_id', '%Y-%m-%d %H:%M', '24', false, 'selbtn1');" value="{$lang.btn_select}" class="button"/>
+						<input type="submit" value="{$lang.button_search}" class="button" />
+					</form>
+				</div>
+				</td>
+			</tr>
+			 <form enctype="multipart/form-data" action="goods.php?act=stock" method="post" name="mixForm" >
+ <tr><td ><div class="list-div" id="listDiv">
+  <table cellpadding="3" cellspacing="1">
+    <tr>
+      <th>
+        <input onclick='listTable.selectAll(this, "checkboxes")' type="checkbox" />
+        <a href="javascript:listTable.sort('message_id'); ">{$lang.record_id}</a>{$sort_message_id}
+      </th>
+      <th><a href="javascript:listTable.sort('goods_name'); ">{$lang.goods_name}</a>{$sort_goods_name}</th>
+   	  <th><a href="javascript:listTable.sort('now_stock'); ">当前库存</a>{$sort_shop_price}</th>
+      <th><a href="javascript:listTable.sort('now_stock'); ">入库量</a>{$sort_shop_price}</th>
+      <th><a href="javascript:listTable.sort('return_goods'); ">出库量</a>{$sort_shop_price}</th>
+      <th>{$lang.handler}</th>
+    </tr>
+    {foreach from=$message_list item=msg}
+    <tr>
+      <td><input type="checkbox" name="checkboxes[]" value="{$msg.message_id}" />{$msg.message_id}</td>
+      <td class="first-cell">{$msg.title|escape:html|truncate:35}</td>
+      <td>{$msg.user_name|escape:html}</td>
+      <td align="right">{$msg.sent_time}</td>
+      <td align="right">{$msg.read_time|default:N/A}</td>
+      <td align="center">
+        <a href="message.php?act=view&id={$msg.message_id}" title="{$lang.view_msg}">{$lang.view}</a>
+         <a href="javascript:;" onclick="listTable.remove({$msg.message_id}, '{$lang.drop_confirm}')">{$lang.remove}</a>
+      </td>
+    </tr>
+    {/foreach}
+    {if $use_storage}
+    <th><a href="javascript:listTable.sort('goods_number'); ">{$lang.goods_number}</a>{$sort_goods_number}</th>
+    {/if}
+    <tr style="text-align:center">
+            <td calspan="7"><input type="submit" value="{$lang.button_submit}" class="button" /><input type="reset" value="{$lang.button_reset}" class="button" /></td>  
+          </tr>
+          </table>
+          </div></td></tr>
+ </form>
+		</table>
+		
+</form>
+        <!-- 鍟嗗搧鐩稿唽 -->
+          <form enctype="multipart/form-data" action="goods.php?act=stock" method="post" name="galleryForm" >
+   
+        <table width="100%" id="gallery-table" style="display:none" align="center">
+          <!-- 鍥剧墖鍒楄�?-->
+          <tr><td><input type="hidden" name="properties-table" id="properties-table" value="properties-table"/></td></tr>
+          <tr>
+            <td>
+              {foreach from=$img_list item=img key=i}
+              <div id="gallery_{$img.img_id}" style="float:left; text-align:center; border: 1px solid #DADADA; margin: 4px; padding:2px;">
+                <a href="javascript:;" onclick="if (confirm('{$lang.drop_img_confirm}')) dropImg('{$img.img_id}')">[-]</a><br />
+                <a href="goods.php?act=show_image&img_url={$img.img_url}" target="_blank">
+                <img src="../{if $img.thumb_url}{$img.thumb_url}{else}{$img.img_url}{/if}" {if $thumb_width neq 0}width="{$thumb_width}"{/if} {if $thumb_height neq 0}height="{$thumb_height}"{/if} border="0" />
+                </a><br />
+                <input type="text" value="{$img.img_desc|escape}" size="15" name="old_img_desc[{$img.img_id}]" />
+              </div>
+              {/foreach}
+            </td>
+          </tr>
+          <tr><td>&nbsp;</td></tr>
+          <!-- 涓婁紶鍥剧墖 -->
+          <tr>
+            <td>
+              <a href="javascript:;" onclick="addImg(this)">[+]</a>
+              {$lang.img_desc} <input type="text" name="img_desc[]" size="20" />
+              {$lang.img_url} <input type="file" name="img_url[]" />
+              <input type="text" size="40" value="{$lang.img_file}" style="color:#aaa;" onfocus="if (this.value == '{$lang.img_file}'){this.value='http://';this.style.color='#000';}" name="img_file[]"/>
+            </td>
+          </tr>
+          <tr style="text-align:center">
+            <td calspan="10"><input type="submit" value="{$lang.button_submit}" class="button" /><input type="reset" value="{$lang.button_reset}" class="button" /></td>  
+          </tr>
+        </table>
+       </form>
+    </div>
+</div>
+<!-- end goods form -->
+{insert_scripts files="validator.js,tab.js"}
+
+<script language="JavaScript">
+  var elements = document.forms['theForm'].elements;
+  var sz1 = new SelectZone(1, elements['source_select1'], elements['target_select1']);
+  var sz2 = new SelectZone(2, elements['source_select2'], elements['target_select2'], elements['price2']);
+  var sz3 = new SelectZone(1, elements['source_select3'], elements['target_select3']);
+  var marketPriceRate = {$cfg.market_price_rate|default:1};
+  var integralPercent = {$cfg.integral_percent|default:0};
+  var listTable.recordCount = {$record_count};
+  var listTable.pageCount = {$page_count};
+
+  {foreach from=$filter item=item key=key}
+	listTable.filter.{$key} = '{$item}';
+  {/foreach}
+
+  {literal}
+  onload = function()
+  {
+      handlePromote(document.forms['theForm'].elements['is_promote'].checked);
+
+      if (document.forms['theForm'].elements['auto_thumb'])
+      {
+          handleAutoThumb(document.forms['theForm'].elements['auto_thumb'].checked);
+      }
+
+      // 妫€鏌ユ柊璁㈠崟
+      startCheckOrder();
+      {/literal}
+      {foreach from=$user_rank_list item=item}
+      set_price_note({$item.rank_id});
+      {/foreach}
+      {literal}
+      document.forms['theForm'].reset();
+  }
+	
+listTable.listCallback = function(result, txt) 
+    {
+        if (result.error > 0) 
+        {
+            alert(result.message);
+        }
+        else 
+        {
+            try 
+            {
+                document.getElementById('listDiv').innerHTML = result.content;
+                bind_order_event();
+                if (typeof result.filter == "object") 
+                {
+                    listTable.filter = result.filter;
+                }
+                listTable.pageCount = result.page_count;
+            }
+            catch(e)
+            {
+                alert(e.message);
+            }
+        }
+    }
+  
+  {/literal}
+</script>
+{include file="pagefooter.htm"}
