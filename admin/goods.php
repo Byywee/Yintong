@@ -471,20 +471,106 @@ elseif ($_REQUEST['act'] == 'add' || $_REQUEST['act'] == 'edit' || $_REQUEST['ac
 }
 
 
+
+
 /*------------------------------------------------------ */
 //--  库存管理
 /*------------------------------------------------------ */
 
 elseif($_REQUEST['act'] == 'stock_in')
 {
+	$smarty->assign('ur_here',      $_LANG['01_goods_stock_in']);
+	$smarty->assign('full_page',    1);
+	
+	if($_REQUEST['one'] == 'stock_edit_one')
+	{
+	
+		$date = time();
+		$goods_id = $_REQUEST['goods_id'];
+		$in_stock = $_REQUEST['in_stock'];
+		$in_stock1 ="update " .$ecs->table('goods'). " set goods_number = goods_number + $in_stock where goods_id ='$goods_id' ";
+		$db -> query($in_stock1);
+		$in_stock2 ="insert into " .$ecs->table('stock_change')." (goods_id,goods_stock_num,goods_time,goods_op_type) values($goods_id,$in_stock,$date,1)
+		 ";
+		$db -> query($in_stock2);
+		
+	}
+	if(isset($_POST['btnSubmit']))
+	{
+		$date = time();
+		$goods_id=$_POST['checkboxes'];
+		$in_stock =array();
+		//print_r($_POST);
+		foreach ($_POST['checkboxes'] as $key=>$value)
+		{
+			$in_stock[] = ($_POST['in_stock_'.$_POST['checkboxes'][$key]]);
+		}
+		//print_r($in_stock);die;
+		foreach ($goods_id as $key=>$value)
+		{
+			$in_stock1 ="update " .$ecs->table('goods'). " set goods_number = goods_number + $in_stock[$key] where goods_id ='$goods_id[$key]' ";
+			$db -> query($in_stock1);
+			$in_stock2 ="insert into " .$ecs->table('stock_change')." (goods_id,goods_stock_num,goods_time,goods_op_type) values($goods_id[$key],$in_stock[$key],$date,1)
+			";
+			$db -> query($in_stock2);
+		}
+	}
+	//$stock_list = get_stocklist();
+	$sql_get_goods_info="select goods_id,goods_name,goods_sn,shop_price,goods_number from ".$ecs->table('goods');
+	$goods_list=$db->getAll($sql_get_goods_info);
+	foreach ($goods_list as $key => $value)
+	{
+		$time="select max(goods_time) from " .$ecs->table('stock_change'). " where goods_id =".$value['goods_id']."";
+		$time1=$db -> getOne($time);
+		$time1=date('Y-m-d H:i:s',$time1);
+		$goods_list[$key]['goods_time'] = $time1;
+	}
+	//print_r($goods_list);
+	$smarty->assign("goods_list",$goods_list);
+	
+	
+	
+	
+	$smarty->assign('stock_list',   $stock_list['stock']);
+	$smarty->assign('filter',       $stock_list['filter']);
+	$smarty->assign('record_count', $stock_list['record_count']);
+	$smarty->assign('page_count',   $stock_list['page_count']);
+	
+	assign_query_info();
+	$date = date("Y-m-d h:i:s");
+	$smarty->assign('date',   $date);
 	$smarty->display("stock_in.htm");
+	
+	
 }
+
 elseif($_REQUEST['act'] == 'stock_out')
-{
+{ 	
+	$sql_get_goods_info="select goods_id,goods_name,goods_sn,shop_price,goods_number,give_integral from ".$ecs->table('goods');
+	$goods_list=$db->getAll($sql_get_goods_info);
+	$smarty->assign("goods_list",$goods_list);
+	$smarty->assign('page_count',   $goods_list['page_count']);
+	$smarty->assign('full_page',   1);
+	$date = date("Y-m-d h:i:s");
+	$admin_name=$_SESSION['admin_name'];
+	if(isset($_POST['btnSubmit']))
+	{
+		$date = date("Y-m-d h:i:s");
+		$goods_id=$_POST['checkboxes'][0];		
+		$out_stock= $_POST['out_stock'][0];
+		$out_stock1 ="update " .$ecs->table('goods'). " set goods_number = goods_number - $out_stock where goods_id ='$goods_id' ";
+		$goods_list =$db -> query($out_stock1);
+	}
+	$smarty->assign('ur_here', $is_add ? (empty($code) ? $_LANG['01_goods_stock_in'] : $_LANG['01_goods_stock_in']) : ($_REQUEST['act'] == 'edit' ? $_LANG['01_goods_stock_in'] : $_LANG['02_goods_stock_out']));
+	$smarty->assign('admin_name',   $admin_name);
+	$smarty->assign('date',   $date);
 	$smarty->display("stock_out.htm");
 }
 elseif($_REQUEST['act'] == 'stock_check')
 {
+	$sql_get_goods_info="select goods_id,goods_name,goods_sn,goods_number from ".$ecs->table('goods');
+	$goods_list = $db->getAll($sql_get_goods_info);
+	$smarty->assign("goods_list",$goods_list);
 	$smarty->display("stock_check.htm");
 }
 elseif($_REQUEST['act'] == 'stock_count')
@@ -496,6 +582,10 @@ elseif($_REQUEST['act'] == 'stock_report')
 	$smarty->display("stock_report.htm");
 }
 
+
+
+	
+	
 
 /*------------------------------------------------------ */
 //-- 插入商品 更新商品
