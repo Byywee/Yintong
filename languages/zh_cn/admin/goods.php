@@ -71,6 +71,7 @@ $_LANG['shop_price'] = '价格';
 $_LANG['is_on_sale'] = '上架';
 $_LANG['goods_number'] = '库存';
 
+
 $_LANG['copy'] = '复制';
 $_LANG['item_list'] = '货品列表';
 
@@ -102,6 +103,8 @@ $_LANG['lab_return_goods'] = '退货';
 $_LANG['lab_check'] = '库存盘点';
 $_LANG['lab_rose'] = '库存日结';
 $_LANG['lab_report'] = '进销存报表';
+$_LANG['stock_in_num'] = ' 入库量';
+$_LANG['stock_out_num'] = '出库量';
 
 /*------------------------------------------------------ */
 //-- 添加/编辑商品信息
