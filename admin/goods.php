@@ -1614,6 +1614,7 @@ elseif ($_REQUEST['act'] == 'edit_sort_order')
 /*------------------------------------------------------ */
 elseif ($_REQUEST['act'] == 'query')
 {
+
     $is_delete = empty($_REQUEST['is_delete']) ? 0 : intval($_REQUEST['is_delete']);
     $code = empty($_REQUEST['extension_code']) ? '' : trim($_REQUEST['extension_code']);
     $goods_list = goods_list($is_delete, ($code=='') ? 1 : 0);
@@ -1647,6 +1648,10 @@ elseif ($_REQUEST['act'] == 'query')
 
     make_json_result($smarty->fetch($tpl), '',
         array('filter' => $goods_list['filter'], 'page_count' => $goods_list['page_count']));
+
+	
+		
+
 }
 
 /*------------------------------------------------------ */
@@ -2717,4 +2722,7 @@ function update_goods_stock($goods_id, $value)
         return false;
     }
 }
+
+
+
 ?>

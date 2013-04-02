@@ -37,12 +37,13 @@ $modules['02_cat_and_goods']['52_virtual_card_change'] = 'virtual_card.php?act=c
 $modules['02_cat_and_goods']['goods_auto']             = 'goods_auto.php?act=list';
 
 
+
+
 $modules['031_goods_stock']['01_goods_stock_in']     = 'stock_in.php?act=stock_in';
 $modules['031_goods_stock']['02_goods_stock_out']     = 'stock_out.php?act=stock_out';
+$modules['031_goods_stock']['03_goods_stock_check']     = 'stock_check.php?act=stock_check';
+$modules['031_goods_stock']['04_goods_stock_count']     = 'stock_count.php?act=stock_count';
 
-$modules['031_goods_stock']['03_goods_stock_check']     = 'goods.php?act=stock_check';
-$modules['031_goods_stock']['04_goods_stock_count']     = 'goods.php?act=stock_count';
-$modules['031_goods_stock']['05_goods_stock_report']     = 'goods.php?act=stock_report';
 
 $modules['03_promotion']['02_snatch_list']          = 'snatch.php?act=list';
 $modules['03_promotion']['04_bonustype_list']       = 'bonus.php?act=list';
