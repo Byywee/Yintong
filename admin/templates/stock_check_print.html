@@ -4,24 +4,21 @@ body,td { font-size:13px; }
 <h1 align="center">库存盘点</h1>
 <table width="100%" cellpadding="1">
     <tbody>
-        <table cellpadding="3" cellspacing="1">
+        <table cellpadding="3" cellspacing="1"  border="1" bordercolor="#000000" bordercolordark="#000000">
   <tr>
-    <th>
-      <input onclick='listTable.selectAll(this, "checkboxes")' type="checkbox" />
-      <a href="javascript:listTable.sort('goods_id'); ">{$lang.record_id}</a>{$sort_goods_id}
-    </th>
-    <th><a href="javascript:listTable.sort('goods_name'); ">{$lang.goods_name}</a>{$sort_goods_name}</th>
-    <th><a href="javascript:listTable.sort('goods_sn'); ">{$lang.goods_sn}</a>{$sort_goods_sn}</th>
-    <th><a href="javascript:listTable.sort('shop_price'); ">{$lang.lable_info_stock_num}</a>{$sort_shop_price}</th>
-    <th><a href="javascript:listTable.sort('is_on_sale'); ">{$lang.lable_fact_stock_num}</a>{$sort_is_on_sale}</th>
-    <th><a href="javascript:listTable.sort('is_best'); ">{$lang.lable_loss_stock_num}</a>{$sort_is_best}</th>
-    <th><a href="javascript:listTable.sort('is_new'); ">{$lang.lable_loss_stock_note}</a>{$sort_is_new}</th>
+    <tr align="center">
+    <td bgcolor="#CCC">{$lang.goods_name}</td>
+    <td bgcolor="#CCC">{$lang.goods_sn}</td>
+    <td bgcolor="#CCC">{$lang.lable_info_stock_num}</td>
+    <td bgcolor="#CCC">{$lang.lable_fact_stock_num}</td>
+    <td bgcolor="#CCC">{$lang.lable_loss_stock_num}</td>
+    <td bgcolor="#CCC">{$lang.lable_loss_stock_note}</td>
+        </tr>
     <!--<th><a href="javascript:listTable.sort('is_hot'); ">{$lang.is_hot}</a>{$sort_is_hot}</th>
     <th><a href="javascript:listTable.sort('sort_order'); ">{$lang.sort_order}</a>{$sort_sort_order}</th>-->
   <tr>
   {foreach from=$goods_list item=goods}
   <tr>
-    <td><input type="checkbox" name="checkboxes[]" value="{$goods.goods_id}" />{$goods.goods_id}</td>
     <td class="first-cell" style="{if $goods.is_promote}color:red;{/if}"><span onclick="listTable.edit(this, 'edit_goods_name', {$goods.goods_id})">{$goods.goods_name|escape:html}</span></td>
     <td><span onclick="listTable.edit(this, 'edit_goods_sn', {$goods.goods_id})">{$goods.goods_sn}</span></td>
     <td align="center">{$goods.goods_number}</td>
@@ -38,21 +35,4 @@ body,td { font-size:13px; }
   {foreachelse}
   <tr><td class="no-records" colspan="10">{$lang.no_records}</td></tr>
   {/foreach}
-</table>
-    </tbody>
-</table>
-<table width="100%" border="1" style="border-collapse:collapse;border-color:#000;">
-    <tbody>
-       
-    </tbody>
-</table>
-<table width="100%" border="0">
-    <tbody>
-
-    </tbody>
-</table>
-<table width="100%" border="0">
-    <tbody>
-      
-    </tbody>
 </table>

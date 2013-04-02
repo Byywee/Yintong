@@ -161,8 +161,9 @@ $_LANG['01_goods_stock_in'] = '进货列表';
 $_LANG['02_goods_stock_out'] = '退货列表';
 $_LANG['03_goods_stock_check'] = '库存盘点';
 $_LANG['04_goods_stock_count'] = '库存日结';
-$_LANG['05_goods_stock_report'] = '进销存报表';
-
+$_LANG['051_goods_stock_report'] = '进销存报表--进销退存损报表';
+$_LANG['052_goods_stock_report'] = '进销存报表--销售表报表';
+$_LANG['053_goods_stock_report'] = '进销存报表--库存查询';
 
 /* 商品管理 */
 $_LANG['01_goods_list'] = '商品列表';

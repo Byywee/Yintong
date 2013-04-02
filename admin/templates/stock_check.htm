@@ -1,15 +1,15 @@
 <!-- $Id: goods_list.htm 17126 2010-04-23 10:30:26Z liuhui $ -->
-
+{if $full_page}
 {include file="pageheader.htm"}
 {insert_scripts files="../js/utils.js,listtable.js"}
 
 <!-- 商品搜索 -->
-{include file="goods_search.htm"}
+{include file="stock_chekc_search.htm"}
 <!-- 商品列表 -->
-<form method="post" action="goods.php" name="listForm" onsubmit="return confirmSubmit(this)">
+<form method="post" action="" name="listForm" onsubmit="return confirmSubmit(this)">
   <!-- start goods list -->
   <div class="list-div" id="listDiv">
-
+{/if}
 <table cellpadding="3" cellspacing="1">
   <tr>
     <th>
@@ -24,9 +24,7 @@
     <th><a href="javascript:listTable.sort('is_new'); ">{$lang.lable_loss_stock_note}</a>{$sort_is_new}</th>
     <!--<th><a href="javascript:listTable.sort('is_hot'); ">{$lang.is_hot}</a>{$sort_is_hot}</th>
     <th><a href="javascript:listTable.sort('sort_order'); ">{$lang.sort_order}</a>{$sort_sort_order}</th>-->
-    {if $use_storage}
-    <th><a href="javascript:listTable.sort('goods_number'); ">{$lang.goods_number}</a>{$sort_goods_number}</th>
-    {/if}
+
     <th>{$lang.handler}</th>
   <tr>
   {foreach from=$goods_list item=goods}
@@ -44,9 +42,6 @@
     <td align="center"><input type="text" id="stock_loss_note_{$goods.goods_id}" name="stock_loss_note[]" width="30" height="40"/></td>
    <!-- <td align="center"><img src="images/{if $goods.is_hot}yes{else}no{/if}.gif" onclick="listTable.toggle(this, 'toggle_hot', {$goods.goods_id})" /></td>
     <td align="center"><span onclick="listTable.edit(this, 'edit_sort_order', {$goods.goods_id})">{$goods.sort_order}</span></td>-->
-    {if $use_storage}
-    <td align="right"><span onclick="listTable.edit(this, 'edit_goods_number', {$goods.goods_id})">{$goods.goods_number}</span></td>
-    {/if}
     <td align="center">
      <!-- <a href="../goods.php?id={$goods.goods_id}" target="_blank" title="{$lang.view}"><img src="images/icon_view.gif" width="16" height="16" border="0" /></a>
       <a href="goods.php?act=edit&goods_id={$goods.goods_id}{if $code neq 'real_goods'}&extension_code={$code}{/if}" title="{$lang.edit}"><img src="images/icon_edit.gif" width="16" height="16" border="0" /></a>
@@ -61,7 +56,7 @@
       {/if}-->		
 	  <input type="button" value="确认" id="btnConfirmOne" name="btnConfirmOne" onclick="var stock_loss_note = document.getElementById('stock_loss_note_{$goods.goods_id}').value;
 			var stock_loss_num  = document.getElementById('stock_loss_num_{$goods.goods_id}').value;
-			if(stock_loss_note == '' && stock_loss_num != 0){alert('请注明损耗原因，以备核实，谢谢');return false;}window.location.href='goods.php?act=stock_check&one=one&stock_loss_num='+stock_loss_num+'&goods_id={$goods.goods_id}';return true;" />
+			if(stock_loss_note == '' && stock_loss_num != 0){alert('请注明损耗原因，以备核实，谢谢');return false;}window.location.href='stock_check.php?act=stock_check&one=one&stock_loss_num='+stock_loss_num+'&goods_id={$goods.goods_id}';return true;" />
 	 
     </td>
   </tr>
@@ -104,19 +99,10 @@
   <select name="target_cat" style="display:none">
     <option value="0">{$lang.select_please}</option>{$cat_list}
   </select>-->
-	{if $suppliers_list > 0}
-  <!--二级主菜单：转移供货商-->
-  <select name="suppliers_id" style="display:none">
-    <option value="-1">{$lang.select_please}</option>
-    <option value="0">{$lang.lab_to_shopex}</option>
-    {foreach name=sln from=$suppliers_list item=sl}
-      <option value="{$sl.suppliers_id}">{$sl.suppliers_name}</option>
-    {/foreach}
-  </select>
-  <!--end!-->
-	{/if}  
+  {if $full_page}
   <input type="submit" value="{$lang.button_submit}" id="btnSubmit" name="btnSubmit" class="button" disabled="true" />
-  <input type="button" value="{$lang.button_print}" id="btnPrint" name="btnPrint" class="button" onclick="window.open('goods.php?act=stock_check&print=print')"/>
+  <input type="button" value="{$lang.button_print}" id="btnPrint" name="btnPrint" class="button" onclick="window.open('stock_check.php?act=stock_check&print=print')"/>
+  {/if}
 </div>
 </form>
 
@@ -182,4 +168,6 @@
   }
 {/literal}
 </script>
+{if $full_page}
 {include file="pagefooter.htm"}
+{/if}
