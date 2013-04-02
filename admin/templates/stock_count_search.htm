@@ -1,0 +1,37 @@
+<!-- $Id: goods_search.htm 16790 2009-11-10 08:56:15Z wangleisvn $ -->
+<script type="text/javascript" language="javascript">
+</script>
+<div class="form-div">
+  <form action="javascript:searchGoods();" method="" name="stockForm">
+    <img src="images/icon_search.gif" width="26" height="22" border="0" alt="SEARCH" />
+	 <select name="cat_id"><option value="0">{$lang.goods_cat}</option>{$cat_list}</select>
+    <select name="brand_id"><option value="0">{$lang.goods_brand}</option>{html_options options=$brand_list}</select>
+    <select name="intro_type"><option value="0">{$lang.intro_type}</option>{html_options options=$intro_list selected=$smarty.get.intro_type}</select>
+	请选择时间段：
+    <input type="text" name="start_time" maxlength="60" size="20" value="{$time_yestoday}" readonly="readonly" id="start_time_id" />
+	<input name="selbtn1" type="button" id="selbtn1" onclick="return showCalendar('start_time_id', '%Y-%m-%d %H:%M', '24', false, 'selbtn1');" value="{$lang.btn_select}" class="button"/>
+	~
+	<input type="text" name="end_time" maxlength="60" size="20" value="{$time_today}"  readonly="readonly" id ="end_time_id" />
+	<input name="selbtn1" type="button" id="selbtn1" onclick="return showCalendar('end_time_id', '%Y-%m-%d %H:%M', '24', false, 'selbtn1');" value="{$lang.btn_select}" class="button"/>
+	{$lang.keyword} <input type="text" name="keyword" size="15" />
+	<input type="hidden" name="hint" id="hint" value="stock_count">
+	<input type="submit" value="{$lang.button_search}" class="button" />
+  </form>
+</div>
+
+<script language="JavaScript">
+    function searchGoods()
+    {
+        listTable.filter['cat_id'] = document.forms['stockForm'].elements['cat_id'].value;
+        listTable.filter['brand_id'] = document.forms['stockForm'].elements['brand_id'].value;
+        listTable.filter['intro_type'] = document.forms['stockForm'].elements['intro_type'].value;
+		listTable.filter['start_time'] = document.forms['stockForm'].elements['start_time'].value;
+		listTable.filter['end_time'] = document.forms['stockForm'].elements['end_time'].value;
+		listTable.filter['hint'] = document.forms['stockForm'].elements['hint'].value;
+        listTable.filter['keyword'] = Utils.trim(document.forms['stockForm'].elements['keyword'].value);
+        listTable.filter['page'] = 1;
+
+        listTable.loadList();
+    }
+</script>
+

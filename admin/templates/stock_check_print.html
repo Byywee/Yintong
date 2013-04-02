@@ -1,0 +1,38 @@
+<p>{literal} <style type="text/css">
+body,td { font-size:13px; }
+</style> {/literal}</p>
+<h1 align="center">库存盘点</h1>
+<table width="100%" cellpadding="1">
+    <tbody>
+        <table cellpadding="3" cellspacing="1"  border="1" bordercolor="#000000" bordercolordark="#000000">
+  <tr>
+    <tr align="center">
+    <td bgcolor="#CCC">{$lang.goods_name}</td>
+    <td bgcolor="#CCC">{$lang.goods_sn}</td>
+    <td bgcolor="#CCC">{$lang.lable_info_stock_num}</td>
+    <td bgcolor="#CCC">{$lang.lable_fact_stock_num}</td>
+    <td bgcolor="#CCC">{$lang.lable_loss_stock_num}</td>
+    <td bgcolor="#CCC">{$lang.lable_loss_stock_note}</td>
+        </tr>
+    <!--<th><a href="javascript:listTable.sort('is_hot'); ">{$lang.is_hot}</a>{$sort_is_hot}</th>
+    <th><a href="javascript:listTable.sort('sort_order'); ">{$lang.sort_order}</a>{$sort_sort_order}</th>-->
+  <tr>
+  {foreach from=$goods_list item=goods}
+  <tr>
+    <td class="first-cell" style="{if $goods.is_promote}color:red;{/if}"><span onclick="listTable.edit(this, 'edit_goods_name', {$goods.goods_id})">{$goods.goods_name|escape:html}</span></td>
+    <td><span onclick="listTable.edit(this, 'edit_goods_sn', {$goods.goods_id})">{$goods.goods_sn}</span></td>
+    <td align="center">{$goods.goods_number}</td>
+    <td align="center">
+		<input type="text" name="stock_fact_num[]" id="stock_fact_num_{$goods.goods_id}" size="7" maxlength="7" value="{$goods.goods_number}" onkeyup="javascript:document.getElementById('stock_loss_num_{$goods.goods_id}').value={$goods.goods_number}-document.getElementById(this.id).value;"/>
+	</td>
+    <td align="center">
+		<input type="text" name="stock_loss_num_{$goods.goods_id}" id="stock_loss_num_{$goods.goods_id}" size="7" maxlength="7" value="0" readonly="true" />
+	</td>
+    <td align="center"><input type="text" id="stock_loss_note_{$goods.goods_id}" name="stock_loss_note[]" width="30" height="40"/></td>
+   <!-- <td align="center"><img src="images/{if $goods.is_hot}yes{else}no{/if}.gif" onclick="listTable.toggle(this, 'toggle_hot', {$goods.goods_id})" /></td>
+    <td align="center"><span onclick="listTable.edit(this, 'edit_sort_order', {$goods.goods_id})">{$goods.sort_order}</span></td>-->
+  </tr>
+  {foreachelse}
+  <tr><td class="no-records" colspan="10">{$lang.no_records}</td></tr>
+  {/foreach}
+</table>

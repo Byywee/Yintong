@@ -470,33 +470,6 @@ elseif ($_REQUEST['act'] == 'add' || $_REQUEST['act'] == 'edit' || $_REQUEST['ac
     $smarty->display('goods_info.htm');
 }
 
-
-/*------------------------------------------------------ */
-//--  库存管理
-/*------------------------------------------------------ */
-
-elseif($_REQUEST['act'] == 'stock_in')
-{
-	$smarty->display("stock_in.htm");
-}
-elseif($_REQUEST['act'] == 'stock_out')
-{
-	$smarty->display("stock_out.htm");
-}
-elseif($_REQUEST['act'] == 'stock_check')
-{
-	$smarty->display("stock_check.htm");
-}
-elseif($_REQUEST['act'] == 'stock_count')
-{
-	$smarty->display("stock_count.htm");
-}
-elseif($_REQUEST['act'] == 'stock_report')
-{
-	$smarty->display("stock_report.htm");
-}
-
-
 /*------------------------------------------------------ */
 //-- 插入商品 更新商品
 /*------------------------------------------------------ */
@@ -1641,39 +1614,68 @@ elseif ($_REQUEST['act'] == 'edit_sort_order')
 /*------------------------------------------------------ */
 elseif ($_REQUEST['act'] == 'query')
 {
-    $is_delete = empty($_REQUEST['is_delete']) ? 0 : intval($_REQUEST['is_delete']);
-    $code = empty($_REQUEST['extension_code']) ? '' : trim($_REQUEST['extension_code']);
-    $goods_list = goods_list($is_delete, ($code=='') ? 1 : 0);
-
-    $handler_list = array();
-    $handler_list['virtual_card'][] = array('url'=>'virtual_card.php?act=card', 'title'=>$_LANG['card'], 'img'=>'icon_send_bonus.gif');
-    $handler_list['virtual_card'][] = array('url'=>'virtual_card.php?act=replenish', 'title'=>$_LANG['replenish'], 'img'=>'icon_add.gif');
-    $handler_list['virtual_card'][] = array('url'=>'virtual_card.php?act=batch_card_add', 'title'=>$_LANG['batch_card_add'], 'img'=>'icon_output.gif');
-
-    if (isset($handler_list[$code]))
-    {
-        $smarty->assign('add_handler',      $handler_list[$code]);
-    }
-    $smarty->assign('code',         $code);
-    $smarty->assign('goods_list',   $goods_list['goods']);
-    $smarty->assign('filter',       $goods_list['filter']);
-    $smarty->assign('record_count', $goods_list['record_count']);
-    $smarty->assign('page_count',   $goods_list['page_count']);
-    $smarty->assign('list_type',    $is_delete ? 'trash' : 'goods');
-    $smarty->assign('use_storage',  empty($_CFG['use_storage']) ? 0 : 1);
-
-    /* 排序标记 */
-    $sort_flag  = sort_flag($goods_list['filter']);
-    $smarty->assign($sort_flag['tag'], $sort_flag['img']);
-
-    /* 获取商品类型存在规格的类型 */
-    $specifications = get_goods_type_specifications();
-    $smarty->assign('specifications', $specifications);
-
-    $tpl = $is_delete ? 'goods_trash.htm' : 'goods_list.htm';
-
-    make_json_result($smarty->fetch($tpl), '',
-        array('filter' => $goods_list['filter'], 'page_count' => $goods_list['page_count']));
+		$hint = $_REQUEST['hint'];
+		if($hint == 'stock_check')
+		{
+			$goods_list = get_stock_check();
+			$smarty->assign('goods_list',   $goods_list['goods']);
+			$smarty->assign('filter',       $goods_list['filter']);
+			$smarty->assign('record_count', $goods_list['record_count']);
+			$smarty->assign('page_count',   $goods_list['page_count']);
+		
+			make_json_result($smarty->fetch('stock_check.htm'), '',
+				array('filter' => $goods_list['filter'], 'page_count' => $goods_list['page_count']));
+			
+		}
+		elseif($hint == 'stock_count')
+		{
+			make_json_result($smarty->fetch('stock_count.htm'), '',
+				array('filter' => $goods_list['filter'], 'page_count' => $goods_list['page_count']));
+		}
+		else
+		{
+			$is_delete = empty($_REQUEST['is_delete']) ? 0 : intval($_REQUEST['is_delete']);
+			$code = empty($_REQUEST['extension_code']) ? '' : trim($_REQUEST['extension_code']);
+			$goods_list = goods_list($is_delete, ($code=='') ? 1 : 0);
+			
+			$handler_list = array();
+			$handler_list['virtual_card'][] = array('url'=>'virtual_card.php?act=card', 'title'=>$_LANG['card'], 'img'=>'icon_send_bonus.gif');
+			$handler_list['virtual_card'][] = array('url'=>'virtual_card.php?act=replenish', 'title'=>$_LANG['replenish'], 'img'=>'icon_add.gif');
+			$handler_list['virtual_card'][] = array('url'=>'virtual_card.php?act=batch_card_add', 'title'=>$_LANG['batch_card_add'], 'img'=>'icon_output.gif');
+		
+			if (isset($handler_list[$code]))
+			{
+				$smarty->assign('add_handler',      $handler_list[$code]);
+			}
+			
+			$smarty->assign('list_type',    $is_delete ? 'trash' : 'goods');
+			$smarty->assign('use_storage',  empty($_CFG['use_storage']) ? 0 : 1);
+			$smarty->assign('code',         $code);
+		
+			/* 排序标记 */
+			$sort_flag  = sort_flag($goods_list['filter']);
+			$smarty->assign($sort_flag['tag'], $sort_flag['img']);
+		
+			/* 获取商品类型存在规格的类型 */
+			$specifications = get_goods_type_specifications();
+			$smarty->assign('specifications', $specifications);
+			$tpl = $is_delete ? 'goods_trash.htm' : 'goods_list.htm';
+			/*if($hint == 'stock_check')
+			{
+				$tpl = 'stock_check.htm';
+				$smarty->assign('goods_list',   $goods_list['goods']);
+				$smarty->assign('filter',       $goods_list['filter']);
+				$smarty->assign('record_count', $goods_list['record_count']);
+				$smarty->assign('page_count',   $goods_list['page_count']);
+				make_json_result($smarty->fetch($tpl), '',array('filter' => $goods_list['filter'], 'page_count' => $goods_list['page_count']));
+			}*/
+			$smarty->assign('goods_list',   $goods_list['goods']);
+			$smarty->assign('filter',       $goods_list['filter']);
+			$smarty->assign('record_count', $goods_list['record_count']);
+			$smarty->assign('page_count',   $goods_list['page_count']);
+			make_json_result($smarty->fetch($tpl), '',array('filter' => $goods_list['filter'], 'page_count' => $goods_list['page_count']));
+		}
+		
 }
 
 /*------------------------------------------------------ */
@@ -2813,4 +2815,70 @@ function update_goods_stock($goods_id, $value)
         return false;
     }
 }
+
+function get_goodslist()
+{
+    $result = get_filter();
+    if ($result === false)
+    {
+        /* 分页大小 */
+        $filter = array();
+
+        /* 记录总数以及页数 */
+        if (isset($_POST['keyword']))
+        {
+            $sql = "SELECT COUNT(*) FROM ".$GLOBALS['ecs']->table('goods') ." WHERE goods_name = '".$_POST['keyword']."'";
+        }
+        else
+        {
+            $sql = "SELECT COUNT(*) FROM ".$GLOBALS['ecs']->table('goods');
+        }
+
+        $filter['record_count'] = $GLOBALS['db']->getOne($sql);
+
+        $filter = page_and_size($filter);
+
+        /* 查询记录 */
+        if (isset($_POST['keyword']))
+        {
+            if(strtoupper(EC_CHARSET) == 'GBK')
+            {
+                $keyword = iconv("UTF-8", "gb2312", $_POST['keyowrd']);
+            }
+            else
+            {
+                $keyword = $_POST['keyword'];
+            }
+            $sql = "SELECT * FROM ".$GLOBALS['ecs']->table('goods')." WHERE goods_name like '%{$keyword}%'";
+        }
+        else
+        {
+            $sql = "SELECT * FROM ".$GLOBALS['ecs']->table('goods')." ";
+        }
+
+        set_filter($filter, $sql);
+    }
+    else
+    {
+        $sql    = $result['sql'];
+        $filter = $result['filter'];
+    }
+    $res = $GLOBALS['db']->selectLimit($sql, $filter['page_size'], $filter['start']);
+
+    $arr = array();
+    while ($rows = $GLOBALS['db']->fetchRow($res))
+    {
+        /*$brand_logo = empty($rows['brand_logo']) ? '' :
+            '<a href="../' . DATA_DIR . '/brandlogo/'.$rows['brand_logo'].'" target="_brank"><img src="images/picflag.gif" width="16" height="16" border="0" alt='.$GLOBALS['_LANG']['brand_logo'].' /></a>';
+        $site_url   = empty($rows['site_url']) ? 'N/A' : '<a href="'.$rows['site_url'].'" target="_brank">'.$rows['site_url'].'</a>';
+
+        $rows['brand_logo'] = $brand_logo;
+        $rows['site_url']   = $site_url;*/
+
+        $arr[] = $rows;
+    }
+
+    return array('goods' => $arr, 'filter' => $filter, 'page_count' => $filter['page_count'], 'record_count' => $filter['record_count']);
+}
+
 ?>
