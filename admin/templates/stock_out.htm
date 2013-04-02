@@ -1,16 +1,16 @@
 <!-- $Id: goods_list.htm 17126 2010-04-23 10:30:26Z liuhui $ -->
 
-
+{if $full_page}
 {include file="pageheader.htm"}
 {insert_scripts files="../js/utils.js,listtable.js"}
 
 <!-- 商品搜索 -->
-{include file="goods_search.htm"}
+{include file="stock_search.htm"}
 <!-- 商品列表 -->
 <form method="post" action="" name="listForm" onsubmit="return confirmSubmit(this)">
   <!-- start goods list -->
   <div class="list-div" id="listDiv">
-
+{/if}
 <table cellpadding="3" cellspacing="1">
   <tr>
     <th>
@@ -23,26 +23,36 @@
     <th><a href="javascript:listTable.sort('goods_number'); ">现有库存</a>{$sort_goods_number}</th>
     <th><a href="javascript:listTable.sort('out_stock'); ">退货量</a>{$sort_out_stock}</th>
     <th><a href="javascript:listTable.sort('integral'); ">商品积分</a>{$sort_integral}</th>
-    <th><a href="javascript:listTable.sort('operator'); ">操作人</a>{$sort_operator}</th>
     <th><a href="javascript:listTable.sort('return_time'); ">退货时间</a>{$sort_return_time}</th>
+    <th><a href="javascript:listTable.sort('operation'); ">操作</a>{$sort_operation}</th>
   <tr>
   {foreach from=$goods_list item=goods}
   <tr>
-    <td><input type="checkbox" name="checkboxes[]" value="{$goods.goods_id}" />{$goods.goods_id}</td>
-    <td class="first-cell" style="{if $goods.is_promote}color:red;{/if}"><span onclick="listTable.edit(this, 'edit_goods_name', {$goods.goods_id})">{$goods.goods_name|escape:html}</span></td>
-    <td><span onclick="listTable.edit(this, 'edit_goods_sn', {$goods.goods_id})">{$goods.goods_sn}</span></td>
-    <td align="right"><span onclick="listTable.edit(this, 'edit_goods_price', {$goods.goods_id})">{$goods.shop_price}
-
-    
-	<td align="right"><span onclick="listTable.edit(this, 'edit_goods_number', {$goods.goods_id})">{$goods.goods_number}</span></td>
-	<td align="center"><input type="text" name="out_stock[]" value=""/></td>
+    <td><input type="checkbox" name="checkboxes[]" id="checkboxes_{$goods.goods_id}" value="{$goods.goods_id}" />{$goods.goods_id}</td>
+    <td class="first-cell" style="{if $goods.is_promote}color:red;{/if}">{$goods.goods_name|escape:html}</span></td>
+    <td>{$goods.goods_sn}</span></td>
+    <td align="right">{$goods.shop_price}
+	<td align="right">{$goods.goods_number}</span></td>
+	<td align="center"><input type="text" name="out_stock_{$goods.goods_id}" id="out_stock_{$goods.goods_id}" value=""/></td>
 	<td align="center">{$goods.give_integral}</td>
 	<td align="center">{$goods.goods_time}</td>
-	<td align="center">{$date}</td>
+	<td align="center"><input type="button" name="button" value="确定" onclick="out_stock({$goods.goods_id});"/></td>
   </tr>
   {foreachelse}
   <tr><td class="no-records" colspan="10">{$lang.no_records}</td></tr>
   {/foreach}
+  <script type="text/javascript">
+  /**
+   *入库__单个操作
+   */
+   function out_stock(k)
+   {
+ 	  var goods_id = k;
+ 	  var out_stock = document.getElementById('out_stock_'+goods_id).value;	 
+ 	  window.location.href='stock_out.php?act=stock_out&one=stock_edit_one&goods_id='+goods_id+'&out_stock='+out_stock+'';
+ 	 
+   }  
+  </script>
 </table>
 <!-- end goods list -->
 
@@ -55,7 +65,7 @@
   </tr>
 </table>
 
-
+{if $full_page}
 </div>
 
 <div>
@@ -145,3 +155,4 @@
 {/literal}
 </script>
 {include file="pagefooter.htm"}
+{/if}

@@ -1,11 +1,9 @@
 <!-- $Id: goods_list.htm 17126 2010-04-23 10:30:26Z liuhui $ -->
 {if $full_page}
-
 {include file="pageheader.htm"}
 {insert_scripts files="../js/utils.js,listtable.js"}
-
 <!-- 商品搜索 -->
-{include file="goods_search.htm"}
+{include file="stock_search.htm"}
 <!-- 商品列表 -->
 <form method="post" action="goods.php" name="listForm" onsubmit="return confirmSubmit(this)">
   <!-- start goods list -->
@@ -31,7 +29,6 @@
     <td class="first-cell" style="{if $goods.is_promote}color:red;{/if}"><span onclick="listTable.edit(this, 'edit_goods_name', {$goods.goods_id})">{$goods.goods_name|escape:html}</span></td>
     <td ><span onclick="listTable.edit(this, 'edit_goods_sn', {$goods.goods_id})">{$goods.goods_sn}</span></td>
     <td align="center">{$goods.shop_price}</td>
-
 	<td align="center">{$goods.goods_number}</td>
 	<td align="center"><input type="text" name="in_stock_{$goods.goods_id}" id="in_stock_{$goods.goods_id}" value=""/></td>
 	<td align="center">{$goods.goods_time}</td>
@@ -50,7 +47,7 @@
  	  var goods_id = k;
  	  var in_stock = document.getElementById('in_stock_'+goods_id).value;
  	  
- 	  window.location.href='goods.php?act=stock_in&one=stock_edit_one&goods_id='+goods_id+'&in_stock='+in_stock+'';
+ 	  window.location.href='stock_in.php?act=stock_in&one=stock_edit_one&goods_id='+goods_id+'&in_stock='+in_stock+'';
  	 
    }  
   </script>
