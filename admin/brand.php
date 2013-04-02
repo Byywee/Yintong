@@ -323,7 +323,6 @@ elseif ($_REQUEST['act'] == 'query')
     $smarty->assign('filter',       $brand_list['filter']);
     $smarty->assign('record_count', $brand_list['record_count']);
     $smarty->assign('page_count',   $brand_list['page_count']);
-
     make_json_result($smarty->fetch('brand_list.htm'), '',
         array('filter' => $brand_list['filter'], 'page_count' => $brand_list['page_count']));
 }

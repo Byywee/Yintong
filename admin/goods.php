@@ -470,33 +470,6 @@ elseif ($_REQUEST['act'] == 'add' || $_REQUEST['act'] == 'edit' || $_REQUEST['ac
     $smarty->display('goods_info.htm');
 }
 
-
-/*------------------------------------------------------ */
-//--  库存管理
-/*------------------------------------------------------ */
-
-elseif($_REQUEST['act'] == 'stock_in')
-{
-	$smarty->display("stock_in.htm");
-}
-elseif($_REQUEST['act'] == 'stock_out')
-{
-	$smarty->display("stock_out.htm");
-}
-elseif($_REQUEST['act'] == 'stock_check')
-{
-	$smarty->display("stock_check.htm");
-}
-elseif($_REQUEST['act'] == 'stock_count')
-{
-	$smarty->display("stock_count.htm");
-}
-elseif($_REQUEST['act'] == 'stock_report')
-{
-	$smarty->display("stock_report.htm");
-}
-
-
 /*------------------------------------------------------ */
 //-- 插入商品 更新商品
 /*------------------------------------------------------ */
@@ -2645,76 +2618,7 @@ function list_link($is_add = true, $extension_code = '')
     return array('href' => $href, 'text' => $text);
 }
 
-//获取所有商品的库存数量
-//进货
-function get_stock()
-{
-	$sql_get_goods_stock_num  = " select goods_id,goods_name,goods_sn,shop_price,goods_number from ".$GLOBALS['ecs']->table('goods');
-	$goods_stock_num = $GLOBALS['db']->getAll($sql_get_goods_stock_num);
-	return $goods_stock_num;
-}
-//退货
-function get_return_stock()
-{
-	$sql_get_goods_stock_num  = " select goods_id,goods_name,goods_sn,shop_price,goods_number from ".$GLOBALS['ecs']->table('goods');
-	$goods_stock_num = $GLOBALS['db']->getAll($sql_get_goods_stock_num);
-	return $goods_stock_num;
-}
 
-//盘点
-function get_stock_count()
-{
-	$result = get_filter();
-	if($result === false)
-	{
-		$filter['goods_id'] = empty($_REQUEST['goods_id']) ? '' : $_REQUEST['goods_id'];
-		
-		$filter['page'] = empty($_REQUEST['page']) || (intval($_REQUEST['page']) <= 0) ? 1 : intval($_REQUEST['page']);
-
-		if (isset($_REQUEST['page_size']) && intval($_REQUEST['page_size']) > 0)
-		{
-			$filter['page_size'] = intval($_REQUEST['page_size']);
-		}
-		elseif (isset($_COOKIE['ECSCP']['page_size']) && intval($_COOKIE['ECSCP']['page_size']) > 0)
-		{
-			$filter['page_size'] = intval($_COOKIE['ECSCP']['page_size']);
-		}
-		else
-		{
-			$filter['page_size'] = 51;
-		}
-	}
-    else
-	{
-		$sql    = $result['sql'];
-        $filter = $result['filter'];
-	}
-	
-	$sql = "SELECT COUNT(*) FROM " . $GLOBALS['ecs']->table('goods');
-	$filter['record_count']   = $GLOBALS['db']->getOne($sql);
-	$filter['page_count']     = $filter['record_count'] > 0 ? ceil($filter['record_count'] / $filter['page_size']) : 1;
-
-	/* 查询 */
-	$sql = "SELECT goods_id,goods_name,goods_sn,goods_number from ".$GLOBALS['ecs']->table('goods');
-
-	foreach (array('goods_sn', 'goods_name', 'goods_id', 'goods_number') AS $val)
-	{
-		$filter[$val] = stripslashes($filter[$val]);
-	}
-	set_filter($filter, $sql);
-
-	$goods_stock_num = $GLOBALS['db']->getAll($sql);
-
-	
-	$goods = array('goods' => $goods_stock_num,'page_count' => $filter['page_count'], 'record_count' => $filter['record_count']);
-	/* print_r($goods); */
-	return $goods;
-}
-
-
-//日结
-
-//进销存报表
 
 
 
