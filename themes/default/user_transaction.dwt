@@ -412,7 +412,7 @@
 				<input type="submit"  id="form_submit"value="提交" {if $goods.goods_number eq 0 && $goods.back_sales_num gt 0}disabled{/if}/>
 				</form>
                 
-				{elseif $goods.back_sales_num lte $goods.goods_number && $goods.back_sales_num neq 0 && $goods.sale_return_able eq '1' && $goods.sale_return_timeout eq 'no_timeout' && $goods.back_sales_num gt 0 }
+				{elseif $goods.back_sales_num lte $goods.goods_number && $goods.back_sales_num neq 0 && $goods.sale_return_able eq '0' && $goods.sale_return_timeout eq 'no_timeout' && $goods.back_sales_num gt 0 }
 					{if $item.order_status != '无效'}
 				<font color="red">					
 				     	退货中,请等待客服人员联系...
@@ -476,7 +476,7 @@
               <!-- {/if} -->        </td>
           </tr>
           <tr>
-            <td align="right" bgcolor="#ffffff">{$lang.order_amount}: {$order.formated_order_amount}
+            <td align="right" bgcolor="#ffffff">{$lang.order_amount}wrerw: {$order.formated_order_amount}
             <!-- {if $order.extension_code eq "group_buy"} --><br />
             {$lang.notice_gb_order_amount}<!-- {/if} --></td>
           </tr>
