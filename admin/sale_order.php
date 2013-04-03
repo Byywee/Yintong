@@ -159,10 +159,28 @@ function get_sales_order($is_pagination = true)
         $sales_order_data[$key]['short_name']  = sub_str($item['goods_name'], 30, true);
         $sales_order_data[$key]['turnover']    = price_format($item['turnover']);
         $sales_order_data[$key]['taxis']       = $key + 1;
+		
+		//获取耗损数量
+		$sql_get_stock_loss_num   = " select sum(goods_stock_num) from ".$GLOBALS['ecs']->table('stock_change');
+		$sql_get_stock_loss_num  .= " where goods_id = ".$item['goods_id']." and goods_op_type = 3";
+		
+		//获取退货数量
+		$sql_get_sale_back_num = " select sum(send_number) from ".$GLOBALS['ecs']->table('stock_change')." where goods_id = ".$item['goods_id'];
+		
+		//获取退货金额
+		$sql_get_sale_back_money  = " select sum(eb.send_number*goods_price) from ";
+		$sql_get_sale_back_money .= $GLOBALS['ecs']->table('back_goods')." eb, ".$GLOBALS['ecs']->table('order_goods')." eo ";
+		$sql_get_sale_back_money .= " where eb.goods_id=eo.goods_id and eb.goods_id = ".$item['goods_id'];
+		
+		if($item['goods_id'] != 0)
+		{
+			$sales_order_data[$key]['loss'] = $GLOBALS['db'] -> getOne($sql_get_stock_loss_num);
+			$sales_order_data[$key]['back'] = $GLOBALS['db'] -> getOne($sql_get_sale_back_num);
+			$sales_order_data[$key]['back_money'] = $GLOBALS['db'] -> getOne($sql_get_sale_back_money);
+		}
     }
 
     $arr = array('sales_order_data' => $sales_order_data, 'filter' => $filter, 'page_count' => $filter['page_count'], 'record_count' => $filter['record_count']);
-	print_r($arr);
 
     return $arr;
 }
