@@ -49,13 +49,6 @@
 		{$lang.ss[$order.shipping_status]}
 	</td>
     <td align="center" valign="top"  nowrap="nowrap">
-     <a href="javascript:;" onclick="">未处理</a>
-	 <a href="javascript:;" onclick="">已付款</a>
-	 <a href="javascript:;" onclick="">已收款</a>
-	 <br/>
-	 <a href="javascript:;" onclick="">已发货</a>
-	 <a href="javascript:;" onclick="">已收货</a>
-	 <a href="javascript:;" onclick="">完成</a>
 	 <a href="order.php?act=info&order_id={$order.order_id}">{$lang.detail}</a>
      {if $order.can_remove}
      <br /><a href="javascript:;" onclick="listTable.remove({$order.order_id}, remove_confirm, 'remove_order')">{$lang.remove}</a>

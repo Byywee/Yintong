@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * ECSHOP 会员中心
@@ -22,7 +22,7 @@ require_once(ROOT_PATH . 'languages/' .$_CFG['lang']. '/user.php');
 
 $user_id = $_SESSION['user_id'];
 $action  = isset($_REQUEST['act']) ? trim($_REQUEST['act']) : 'default';
-//print_r($action);
+
 $affiliate = unserialize($GLOBALS['_CFG']['affiliate']);
 $smarty->assign('affiliate', $affiliate);
 $back_act='';
@@ -30,12 +30,12 @@ $back_act='';
 
 // 不需要登录的操作或自己验证是否登录（如ajax处理）的act
 $not_login_arr =
-array('login','act_login','register','act_register','act_edit_password','get_password','send_pwd_email','password', 'signin', 'add_tag', 'collect', 'return_to_cart', 'logout', 'email_list', 'validate_email', 'send_hash_mail', 'order_query', 'is_registered', 'check_email','clear_history','qpassword_name', 'get_passwd_question', 'check_answer', 'sales_return');
+array('login','act_login','register','act_register','act_edit_password','get_password','send_pwd_email','password', 'signin', 'add_tag', 'collect', 'return_to_cart', 'logout', 'email_list', 'validate_email', 'send_hash_mail', 'order_query', 'is_registered', 'check_email','clear_history','qpassword_name', 'get_passwd_question', 'check_answer');
 
 /* 显示页面的action列表 */
 $ui_arr = array('register', 'login', 'profile', 'order_list', 'order_detail', 'address_list', 'collection_list',
 'message_list', 'tag_list', 'get_password', 'reset_password', 'booking_list', 'add_booking', 'account_raply',
-'account_deposit', 'account_log', 'account_detail', 'act_account', 'pay', 'default', 'bonus', 'group_buy', 'group_buy_detail', 'affiliate', 'comment_list','validate_email','track_packages', 'transform_points','qpassword_name', 'get_passwd_question', 'check_answer', 'sales_return');
+'account_deposit', 'account_log', 'account_detail', 'act_account', 'pay', 'default', 'bonus', 'group_buy', 'group_buy_detail', 'affiliate', 'comment_list','validate_email','track_packages', 'transform_points','qpassword_name', 'get_passwd_question', 'check_answer');
 
 /* 未登录处理 */
 if (empty($_SESSION['user_id']))
@@ -84,7 +84,6 @@ if (in_array($action, $ui_arr))
     {
         $smarty->assign('show_transform_points',     1);
     }
-	$smarty->assign('categories',      get_categories_tree()); // 分类树
     $smarty->assign('helps',      get_shop_help());        // 网店帮助
     $smarty->assign('data_dir',   DATA_DIR);   // 数据目录
     $smarty->assign('action',     $action);
@@ -160,8 +159,8 @@ elseif ($action == 'act_register')
         $other['office_phone'] = isset($_POST['extend_field3']) ? $_POST['extend_field3'] : '';
         $other['home_phone'] = isset($_POST['extend_field4']) ? $_POST['extend_field4'] : '';
         $other['mobile_phone'] = isset($_POST['extend_field5']) ? $_POST['extend_field5'] : '';
-        $sel_question = empty($_POST['sel_question']) ? '' : $_POST['sel_question'];
-        $passwd_answer = isset($_POST['passwd_answer']) ? trim($_POST['passwd_answer']) : '';
+        $sel_question = empty($_POST['sel_question']) ? '' : compile_str($_POST['sel_question']);
+        $passwd_answer = isset($_POST['passwd_answer']) ? compile_str(trim($_POST['passwd_answer'])) : '';
 
 
         $back_act = isset($_POST['back_act']) ? trim($_POST['back_act']) : '';
@@ -216,7 +215,7 @@ elseif ($action == 'act_register')
                 if(!empty($_POST[$extend_field_index]))
                 {
                     $temp_field_content = strlen($_POST[$extend_field_index]) > 100 ? mb_substr($_POST[$extend_field_index], 0, 99) : $_POST[$extend_field_index];
-                    $extend_field_str .= " ('" . $_SESSION['user_id'] . "', '" . $val['id'] . "', '" . $temp_field_content . "'),";
+                    $extend_field_str .= " ('" . $_SESSION['user_id'] . "', '" . $val['id'] . "', '" . compile_str($temp_field_content) . "'),";
                 }
             }
             $extend_field_str = substr($extend_field_str, 0, -1);
@@ -497,8 +496,8 @@ elseif ($action == 'act_edit_profile')
     $other['office_phone'] = $office_phone = isset($_POST['extend_field3']) ? trim($_POST['extend_field3']) : '';
     $other['home_phone'] = $home_phone = isset($_POST['extend_field4']) ? trim($_POST['extend_field4']) : '';
     $other['mobile_phone'] = $mobile_phone = isset($_POST['extend_field5']) ? trim($_POST['extend_field5']) : '';
-    $sel_question = empty($_POST['sel_question']) ? '' : $_POST['sel_question'];
-    $passwd_answer = isset($_POST['passwd_answer']) ? trim($_POST['passwd_answer']) : '';
+    $sel_question = empty($_POST['sel_question']) ? '' : compile_str($_POST['sel_question']);
+    $passwd_answer = isset($_POST['passwd_answer']) ? compile_str(trim($_POST['passwd_answer'])) : '';
 
     /* 更新用户扩展字段的数据 */
     $sql = 'SELECT id FROM ' . $ecs->table('reg_fields') . ' WHERE type = 0 AND display = 1 ORDER BY dis_order, id';   //读出所有扩展字段的id
@@ -806,7 +805,7 @@ elseif ($action == 'order_list')
 
     $orders = get_user_orders($user_id, $pager['size'], $pager['start']);
     $merge  = get_user_merge($user_id);
-	//print_r($orders);
+
     $smarty->assign('merge',  $merge);
     $smarty->assign('pager',  $pager);
     $smarty->assign('orders', $orders);
@@ -824,7 +823,6 @@ elseif ($action == 'order_detail')
     $order_id = isset($_GET['order_id']) ? intval($_GET['order_id']) : 0;
 
     /* 订单详情 */
-	//print_r($_REQUEST);print('<br/>');print_r($_POST);
     $order = get_order_detail($order_id, $user_id);
 
     if ($order === false)
@@ -847,9 +845,8 @@ elseif ($action == 'order_detail')
         $goods_list[$key]['market_price'] = price_format($value['market_price'], false);
         $goods_list[$key]['goods_price']  = price_format($value['goods_price'], false);
         $goods_list[$key]['subtotal']     = price_format($value['subtotal'], false);
-		$goods_list[$key]['goods_id']     = $value['goods_id'];
     }
-	
+
      /* 设置能否修改使用余额数 */
     if ($order['order_amount'] > 0)
     {
@@ -888,7 +885,6 @@ elseif ($action == 'order_detail')
     $order['pay_status'] = $_LANG['ps'][$order['pay_status']];
     $order['shipping_status'] = $_LANG['ss'][$order['shipping_status']];
 	
-	/*订单状态的逻辑值*/
 	if($order['shipping_status'] == '收货确认')
 	{
 		$order['order_logic_value'] = 'yes';
@@ -920,7 +916,7 @@ elseif ($action == 'order_detail')
 		$sql .= " and eo.order_id = ".$_GET['order_id']."";
 		$info = $db->getRow($sql);
 		$info['end_time'] = $goods_list[$key]['add_time']+$info['sale_return_able_date'];
-		$timeout_logic_value = (time() - $goods_list[$key]['add_time'] >= $info['sale_return_able_date']) ? true : false;
+		$timeout_logic_value = ($goods_list[$key]['add_time'] < time() && time() < $info['end_time']) ? true : false;
 		
 		if($timeout_logic_value === true)
 		{
@@ -943,18 +939,9 @@ elseif ($action == 'order_detail')
 		
 		$goods_list[$key]['deal_sale_return_status'] = $db->getOne($sql_order_deal_status);
 	}
-	
-	
-	//获取订单商品表中的  订单商品数量/订单退货数量
-	$sql = " select sum(goods_number) order_goods_num from ".$ecs->table('order_goods');
-	$sql .= " where order_id=".$_GET['order_id']."";
-	$order['order_goods_num'] = $db->getOne($sql);
-	$back_sales_address = $db->getOne("select value from ".$ecs->table('shop_config')." where id = 108");
-	
-	//print_r($order);die
-	$smarty->assign('back_sales_address',$back_sales_address);
+
     $smarty->assign('order',      $order);
-    $smarty->assign('goods_list', $goods_list);//print_r($goods_list);
+    $smarty->assign('goods_list', $goods_list);
     $smarty->display('user_transaction.dwt');
 }
 
@@ -1043,14 +1030,14 @@ elseif ($action == 'act_edit_address')
         'province'   => isset($_POST['province'])  ? intval($_POST['province']) : 0,
         'city'       => isset($_POST['city'])      ? intval($_POST['city'])     : 0,
         'district'   => isset($_POST['district'])  ? intval($_POST['district']) : 0,
-        'address'    => isset($_POST['address'])   ? trim($_POST['address'])    : '',
-        'consignee'  => isset($_POST['consignee']) ? trim($_POST['consignee'])  : '',
-        'email'      => isset($_POST['email'])     ? trim($_POST['email'])      : '',
-        'tel'        => isset($_POST['tel'])       ? make_semiangle(trim($_POST['tel'])) : '',
-        'mobile'     => isset($_POST['mobile'])    ? make_semiangle(trim($_POST['mobile'])) : '',
-        'best_time'  => isset($_POST['best_time']) ? trim($_POST['best_time'])  : '',
-        'sign_building' => isset($_POST['sign_building']) ? trim($_POST['sign_building']) : '',
-        'zipcode'       => isset($_POST['zipcode'])       ? make_semiangle(trim($_POST['zipcode'])) : '',
+        'address'    => isset($_POST['address'])   ? compile_str(trim($_POST['address']))    : '',
+        'consignee'  => isset($_POST['consignee']) ? compile_str(trim($_POST['consignee']))  : '',
+        'email'      => isset($_POST['email'])     ? compile_str(trim($_POST['email']))      : '',
+        'tel'        => isset($_POST['tel'])       ? compile_str(make_semiangle(trim($_POST['tel']))) : '',
+        'mobile'     => isset($_POST['mobile'])    ? compile_str(make_semiangle(trim($_POST['mobile']))) : '',
+        'best_time'  => isset($_POST['best_time']) ? compile_str(trim($_POST['best_time']))  : '',
+        'sign_building' => isset($_POST['sign_building']) ? compile_str(trim($_POST['sign_building'])) : '',
+        'zipcode'       => isset($_POST['zipcode'])       ? compile_str(make_semiangle(trim($_POST['zipcode']))) : '',
         );
 
     if (update_address($address))
@@ -1485,186 +1472,108 @@ elseif ($action == 'act_account')
 {
     include_once(ROOT_PATH . 'includes/lib_clips.php');
     include_once(ROOT_PATH . 'includes/lib_order.php');
-	if(!empty($_POST['hg_type']) && $_POST['hg_type']==1)
-	{
-		$amount = isset($_POST['amount']) ? floatval($_POST['amount']) : 0;
-		if ($amount <= 0)
-		{
-			show_message($_LANG['amount_gt_zero']);
-		}
-	
-		/* 变量初始化 */
-		$surplus = array(
-				'user_id'      => $user_id,
-				'rec_id'       => !empty($_POST['rec_id'])      ? intval($_POST['rec_id'])       : 0,
-				'process_type' => isset($_POST['surplus_type']) ? intval($_POST['surplus_type']) : 0,
-				'payment_id'   => isset($_POST['payment_id'])   ? intval($_POST['payment_id'])   : 0,
-				'user_note'    => isset($_POST['user_note'])    ? trim($_POST['user_note'])      : '',
-				'amount'       => $amount
-		);
-	
-		/* 退款申请的处理 */
-		if ($surplus['process_type'] == 1)
-		{
-			/* 判断是否有足够的余额的进行退款的操作 */
-			$sur_amount = get_user_surplus($user_id);
-			if ($amount > $sur_amount)
-			{
-				$content = $_LANG['surplus_amount_error'];
-				show_message($content, $_LANG['back_page_up'], '', 'info');
-			}
-	
-			//插入会员账目明细
-			$amount = '-'.$amount;
-			$surplus['payment'] = '';
-			$surplus['rec_id']  = insert_user_account($surplus, $amount);
-	
-			/* 如果成功提交 */
-			if ($surplus['rec_id'] > 0)
-			{
-				$content = $_LANG['surplus_appl_submit'];
-				show_message($content, $_LANG['back_account_log'], 'user.php?act=account_log', 'info');
-			}
-			else
-			{
-				$content = $_LANG['process_false'];
-				show_message($content, $_LANG['back_page_up'], '', 'info');
-			}
-		}
-		/* 如果是会员预付款，跳转到下一步，进行线上支付的操作 */
-		else
-		{
-			if ($surplus['payment_id'] <= 0)
-			{
-				show_message($_LANG['select_payment_pls']);
-			}
-	
-			include_once(ROOT_PATH .'includes/lib_payment.php');
-	
-			//获取支付方式名称
-			$payment_info = array();
-			$payment_info = payment_info($surplus['payment_id']);
-			$surplus['payment'] = $payment_info['pay_name'];
-	
-			if ($surplus['rec_id'] > 0)
-			{
-				//更新会员账目明细
-				$surplus['rec_id'] = update_user_account($surplus);
-			}
-			else
-			{
-				//插入会员账目明细
-				$surplus['rec_id'] = insert_user_account($surplus, $amount);
-			}
-	
-			//取得支付信息，生成支付代码
-			$payment = unserialize_config($payment_info['pay_config']);
-	
-			//生成伪订单号, 不足的时候补0
-			$order = array();
-			$order['order_sn']       = $surplus['rec_id'];
-			$order['user_name']      = $_SESSION['user_name'];
-			$order['surplus_amount'] = $amount;
-	
-			//计算支付手续费用
-			$payment_info['pay_fee'] = pay_fee($surplus['payment_id'], $order['surplus_amount'], 0);
-	
-			//计算此次预付款需要支付的总金额
-			$order['order_amount']   = $amount + $payment_info['pay_fee'];
-	
-			//记录支付log
-			$order['log_id'] = insert_pay_log($surplus['rec_id'], $order['order_amount'], $type=PAY_SURPLUS, 0);
-	
-			/* 调用相应的支付方式文件 */
-			include_once(ROOT_PATH . 'includes/modules/payment/' . $payment_info['pay_code'] . '.php');
-	
-			/* 取得在线支付方式的支付按钮 */
-			$pay_obj = new $payment_info['pay_code'];
-			$payment_info['pay_button'] = $pay_obj->get_code($order, $payment);
-	
-			/* 模板赋值 */
-			$smarty->assign('payment', $payment_info);
-			$smarty->assign('pay_fee', price_format($payment_info['pay_fee'], false));
-			$smarty->assign('amount',  price_format($amount, false));
-			$smarty->assign('order',   $order);
-			$smarty->display('user_transaction.dwt');
-		}
-	}
-	else
-	{
-		
-		$sql	=	"select * from ecs_hgcard where card_id='".$_POST['hgcard_id']."'";
-		$hgcard	=	$db->getRow($sql);
-		
-		if(empty($hgcard))
-		{
-			show_message($_LANG['card_id_null'],$_LANG['back_page_up'],'user.php?act=account_deposit','warning');
-		}
-		else
-		{
-			$now = time();
-			//有效期验证
-			if($hgcard['end_time'] < $now)
-			{
-				show_message($_LANG['hgcard_over_date'],$_LANG['back_page_up'],'user.php?act=account_deposit','warning');
-			}
-			
-			//使用状态验证
-			if($hgcard['status'] != 0)
-			{
-				show_message($_LANG['hgcard_unvalidate'],$_LANG['back_page_up'],'user.php?act=account_deposit','warning');
-			}
-			
-			//密码验证
-			if($hgcard['password'] != $_POST['hgcard_password'])
-			{
-				show_message($_LANG['hgcard_password_error'],$_LANG['back_page_up'],'user.php?act=account_deposit','warning');
-			}
-			
-			
-			//支付方式
-			$payment_info['pay_name'] = '欢购卡';
-			
-			//获取充值欢购卡的金额
-			$sql  = ' select money from '.$ecs->table('hgcard');
-			$sql .= ' where card_id='.$_POST['hgcard_id'].'';
-			$amount = $db->getOne($sql);
-			
-			//更新欢购卡信息
-			$sql_update_hgcard  = ' update '.$ecs->table('hgcard');
-			$sql_update_hgcard .= ' set user_id='.$_SESSION['user_id'];
-			$sql_update_hgcard .= ', user_name=\''.$_SESSION['user_name'].'\',';
-			$sql_update_hgcard .= ' use_time='.time().' ,status=1';
-			$sql_update_hgcard .= ' where card_id='.$_POST['hgcard_id'].'';
-			$db->query($sql_update_hgcard);
-			
-			//print($sql_update_hgcard);die;
-			
-			//更新用户可使用金额
-			$sql_user_money  = ' update '.$ecs->table('users');
-			$sql_user_money .= ' set user_money=user_money+'.$amount;
-			$sql_user_money .= ' where user_id ='.$_SESSION['user_id'].'';
-			$db->query($sql_user_money);
-			
-			//更新欢购重新日志
-			$sql_insert_log  = ' insert into '.$ecs->table('user_account');
-			$sql_insert_log .= ' (user_id,amount,card_id,add_time,paid_time,user_note,payment,is_paid)';
-			$sql_insert_log .= ' values(\''.$_SESSION['user_id'].'\','.$amount.','.$_POST['hgcard_id'].','.time().','.time().',';
-			$sql_insert_log .= ' \''.$_POST['user_note'].'\' , \''.$payment_info['pay_name'].'\', 1)';
-			$db->query($sql_insert_log);
-			//print($sql."<br/>");
-			//print($sql_update_hgcard."<br />");
-			//print($sql_insert_log."<br />");
-			//print($sql_user_money."<br />");
-			//die;
-			$smarty->assign('payment', $payment_info);
-			$smarty->assign('pay_fee', price_format($payment_info['pay_fee'], false));
-			$smarty->assign('amount',  price_format($amount, false));
-			$smarty->assign('order',   $order);
-			$smarty->display('user_transaction.dwt');
-		}
-		
-	}
+    $amount = isset($_POST['amount']) ? floatval($_POST['amount']) : 0;
+    if ($amount <= 0)
+    {
+        show_message($_LANG['amount_gt_zero']);
+    }
+
+    /* 变量初始化 */
+    $surplus = array(
+            'user_id'      => $user_id,
+            'rec_id'       => !empty($_POST['rec_id'])      ? intval($_POST['rec_id'])       : 0,
+            'process_type' => isset($_POST['surplus_type']) ? intval($_POST['surplus_type']) : 0,
+            'payment_id'   => isset($_POST['payment_id'])   ? intval($_POST['payment_id'])   : 0,
+            'user_note'    => isset($_POST['user_note'])    ? trim($_POST['user_note'])      : '',
+            'amount'       => $amount
+    );
+
+    /* 退款申请的处理 */
+    if ($surplus['process_type'] == 1)
+    {
+        /* 判断是否有足够的余额的进行退款的操作 */
+        $sur_amount = get_user_surplus($user_id);
+        if ($amount > $sur_amount)
+        {
+            $content = $_LANG['surplus_amount_error'];
+            show_message($content, $_LANG['back_page_up'], '', 'info');
+        }
+
+        //插入会员账目明细
+        $amount = '-'.$amount;
+        $surplus['payment'] = '';
+        $surplus['rec_id']  = insert_user_account($surplus, $amount);
+
+        /* 如果成功提交 */
+        if ($surplus['rec_id'] > 0)
+        {
+            $content = $_LANG['surplus_appl_submit'];
+            show_message($content, $_LANG['back_account_log'], 'user.php?act=account_log', 'info');
+        }
+        else
+        {
+            $content = $_LANG['process_false'];
+            show_message($content, $_LANG['back_page_up'], '', 'info');
+        }
+    }
+    /* 如果是会员预付款，跳转到下一步，进行线上支付的操作 */
+    else
+    {
+        if ($surplus['payment_id'] <= 0)
+        {
+            show_message($_LANG['select_payment_pls']);
+        }
+
+        include_once(ROOT_PATH .'includes/lib_payment.php');
+
+        //获取支付方式名称
+        $payment_info = array();
+        $payment_info = payment_info($surplus['payment_id']);
+        $surplus['payment'] = $payment_info['pay_name'];
+
+        if ($surplus['rec_id'] > 0)
+        {
+            //更新会员账目明细
+            $surplus['rec_id'] = update_user_account($surplus);
+        }
+        else
+        {
+            //插入会员账目明细
+            $surplus['rec_id'] = insert_user_account($surplus, $amount);
+        }
+
+        //取得支付信息，生成支付代码
+        $payment = unserialize_config($payment_info['pay_config']);
+
+        //生成伪订单号, 不足的时候补0
+        $order = array();
+        $order['order_sn']       = $surplus['rec_id'];
+        $order['user_name']      = $_SESSION['user_name'];
+        $order['surplus_amount'] = $amount;
+
+        //计算支付手续费用
+        $payment_info['pay_fee'] = pay_fee($surplus['payment_id'], $order['surplus_amount'], 0);
+
+        //计算此次预付款需要支付的总金额
+        $order['order_amount']   = $amount + $payment_info['pay_fee'];
+
+        //记录支付log
+        $order['log_id'] = insert_pay_log($surplus['rec_id'], $order['order_amount'], $type=PAY_SURPLUS, 0);
+
+        /* 调用相应的支付方式文件 */
+        include_once(ROOT_PATH . 'includes/modules/payment/' . $payment_info['pay_code'] . '.php');
+
+        /* 取得在线支付方式的支付按钮 */
+        $pay_obj = new $payment_info['pay_code'];
+        $payment_info['pay_button'] = $pay_obj->get_code($order, $payment);
+
+        /* 模板赋值 */
+        $smarty->assign('payment', $payment_info);
+        $smarty->assign('pay_fee', price_format($payment_info['pay_fee'], false));
+        $smarty->assign('amount',  price_format($amount, false));
+        $smarty->assign('order',   $order);
+        $smarty->display('user_transaction.dwt');
+    }
 }
 
 /* 删除会员余额 */
@@ -2163,16 +2072,16 @@ elseif ($action == 'act_edit_payment')
 elseif ($action == 'save_order_address')
 {
     include_once(ROOT_PATH .'includes/lib_transaction.php');
-
+    
     $address = array(
-        'consignee' => isset($_POST['consignee']) ? trim($_POST['consignee'])  : '',
-        'email'     => isset($_POST['email'])     ? trim($_POST['email'])      : '',
-        'address'   => isset($_POST['address'])   ? trim($_POST['address'])    : '',
-        'zipcode'   => isset($_POST['zipcode'])   ? make_semiangle(trim($_POST['zipcode'])) : '',
-        'tel'       => isset($_POST['tel'])       ? trim($_POST['tel'])        : '',
-        'mobile'    => isset($_POST['mobile'])    ? trim($_POST['mobile'])     : '',
-        'sign_building' => isset($_POST['sign_building']) ? trim($_POST['sign_building']) : '',
-        'best_time' => isset($_POST['best_time']) ? trim($_POST['best_time'])  : '',
+        'consignee' => isset($_POST['consignee']) ? compile_str(trim($_POST['consignee']))  : '',
+        'email'     => isset($_POST['email'])     ? compile_str(trim($_POST['email']))      : '',
+        'address'   => isset($_POST['address'])   ? compile_str(trim($_POST['address']))    : '',
+        'zipcode'   => isset($_POST['zipcode'])   ? compile_str(make_semiangle(trim($_POST['zipcode']))) : '',
+        'tel'       => isset($_POST['tel'])       ? compile_str(trim($_POST['tel']))        : '',
+        'mobile'    => isset($_POST['mobile'])    ? compile_str(trim($_POST['mobile']))     : '',
+        'sign_building' => isset($_POST['sign_building']) ? compile_str(trim($_POST['sign_building'])) : '',
+        'best_time' => isset($_POST['best_time']) ? compile_str(trim($_POST['best_time']))  : '',
         'order_id'  => isset($_POST['order_id'])  ? intval($_POST['order_id']) : 0
         );
     if (save_order_address($address, $user_id))
@@ -2899,9 +2808,10 @@ elseif ($action == 'clear_history')
 {
     setcookie('ECS[history]',   '', 1);
 }
+
 elseif($action == 'sales_return')
 {
-	//print_r($_REQUEST);
+	
 	$sql_get_order_info = "select * from ".$ecs->table('order_info')." where order_id = ".$_REQUEST['order_id']."";
 	$sql_get_user_info = "select * from ".$ecs->table('users')." where user_id = ".$_REQUEST['user_id']."";
 	$sql_get_user_info_addr = "select * from ".$ecs->table('user_address')." where user_id = ".$_REQUEST['user_id']."";

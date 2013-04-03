@@ -6,6 +6,14 @@
   <form name="TimeInterval"  action="javascript:getList()" style="margin:0px">
     {$lang.start_date}&nbsp;{html_select_date field_order="YMD" prefix="start_date" time=$start_date start_year="-10" end_year="+1" display_days=true month_format="%m"}&nbsp;&nbsp;
     {$lang.end_date}&nbsp;{html_select_date field_order="YMD" prefix="end_date" time=$end_date start_year="-10" end_year="+1" display_days=true month_format="%m"}
+	&nbsp;&nbsp;
+	{$lang.lable_goods_number}
+	<select name="compare" id="compare">
+		<option value="">{$lang.lable_select_note}</option>
+		<option value="gte">&gt;=</option>
+		<option value="lte">&lt;=</option>
+	</select>
+	<input type="text" name="query_goods_number" id="query_goods_number" size="4" maxlength="4"/>
     <input type="submit" name="submit" value="{$lang.query}" class="button" />
   </form>
 </div>
@@ -19,6 +27,7 @@
       <th>{$lang.goods_sn}</th>
       <th><a href="javascript:listTable.sort('goods_num', 'DESC'); ">{$lang.sell_amount}</a>{$sort_goods_num}</th>
       <th><a href="javascript:listTable.sort('turnover', 'DESC'); ">{$lang.sell_sum}</a>{$sort_turnover}</th>
+	  <th><a href="javascript:listTable.sort('turnover', 'DESC'); ">{$lang.lable_goods_number}</a>{$sort_turnover}</th>
 	  <th><a href="javascript:listTable.sort('turnover', 'DESC'); ">{$lang.label_send_number}</a>{$sort_turnover}</th>
 	  <th><a href="javascript:listTable.sort('turnover', 'DESC'); ">{$lang.label_send_number_money}</a>{$sort_turnover}</th>
 	  <th><a href="javascript:listTable.sort('turnover', 'DESC'); ">{$lang.lable_loss_number}</a>{$sort_turnover}</th>
@@ -31,6 +40,7 @@
       <td>{$list.goods_sn}</td>
       <td align="right">{$list.goods_num}</td>
       <td align="right">{$list.turnover}</td>
+	  <td align="right">{$list.goods_number}</td>
 	  <td align="right">{$list.back}</td>
 	  <td align="right">{$list.back_money}</td>
 	  <td align="right">{$list.loss}</td>
@@ -72,6 +82,8 @@ function getList()
     var frm =  document.forms['TimeInterval'];
     listTable.filter['start_date'] = frm.elements['start_dateYear'].value + '-' + frm.elements['start_dateMonth'].value + '-' + frm.elements['start_dateDay'].value;
     listTable.filter['end_date'] = frm.elements['end_dateYear'].value + '-' + frm.elements['end_dateMonth'].value + '-' + frm.elements['end_dateDay'].value;
+	listTable.filter['compare'] = frm.elements['compare'].value; 
+	listTable.filter['query_goods_number'] = frm.elements['query_goods_number'].value;
     listTable.filter['page'] = 1;
     listTable.loadList();
     getDownUrl();
