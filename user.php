@@ -824,7 +824,7 @@ elseif ($action == 'order_detail')
     $order_id = isset($_GET['order_id']) ? intval($_GET['order_id']) : 0;
 
     /* 订单详情 */
-	print_r($_REQUEST);print('<br/>');print_r($_POST);
+	//print_r($_REQUEST);print('<br/>');print_r($_POST);
     $order = get_order_detail($order_id, $user_id);
 
     if ($order === false)
