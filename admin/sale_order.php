@@ -162,6 +162,7 @@ function get_sales_order($is_pagination = true)
     }
 
     $arr = array('sales_order_data' => $sales_order_data, 'filter' => $filter, 'page_count' => $filter['page_count'], 'record_count' => $filter['record_count']);
+	print_r($arr);
 
     return $arr;
 }
