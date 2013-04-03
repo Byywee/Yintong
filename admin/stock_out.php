@@ -220,7 +220,14 @@ function stock_out()
 		$filter = $result['filter'];
 	}
 	$row = $GLOBALS['db']->getAll($sql);
-
+	 
+	foreach ($row as $key => $value)
+	{
+		$time="select max(goods_time) from " .$GLOBALS['ecs']->table('stock_change'). " where goods_id =".$value['goods_id']."";
+		$time1=$GLOBALS['db'] -> getOne($time);
+		$time1=date('Y-m-d H:i:s',$time1);
+		$row[$key]['goods_time'] = $time1;
+	}
 	return array('goods' => $row, 'filter' => $filter, 'page_count' => $filter['page_count'], 'record_count' => $filter['record_count']);
 }
 ?>
