@@ -16,6 +16,8 @@
 /* 字段信息 */
 $_LANG['user_id'] = '编号';
 $_LANG['user_name'] = '角色名';
+$_LANG['user_info'] = '角色信息';
+
 $_LANG['email'] = 'Email地址';
 $_LANG['password'] = '密  码';
 $_LANG['join_time'] = '加入时间';
@@ -51,6 +53,8 @@ $_LANG['admin_edit'] = '编辑管理员';
 $_LANG['edit_pwd'] = '修改密码';
 
 $_LANG['back_admin_list'] = '返回角色列表';
+$_LANG['download_role'] = '导出数据到Excel表中';
+
 
 /* 提示信息 */
 $_LANG['js_languages']['user_name_empty'] = '管理员用户名不能为空!';
