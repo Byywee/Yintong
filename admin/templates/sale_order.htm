@@ -19,6 +19,9 @@
       <th>{$lang.goods_sn}</th>
       <th><a href="javascript:listTable.sort('goods_num', 'DESC'); ">{$lang.sell_amount}</a>{$sort_goods_num}</th>
       <th><a href="javascript:listTable.sort('turnover', 'DESC'); ">{$lang.sell_sum}</a>{$sort_turnover}</th>
+	  <th><a href="javascript:listTable.sort('turnover', 'DESC'); ">{$lang.label_send_number}</a>{$sort_turnover}</th>
+	  <th><a href="javascript:listTable.sort('turnover', 'DESC'); ">{$lang.label_send_number_money}</a>{$sort_turnover}</th>
+	  <th><a href="javascript:listTable.sort('turnover', 'DESC'); ">{$lang.label_loss_number}</a>{$sort_turnover}</th>
       <th>{$lang.percent_count}</th>
     </tr>
   {foreach from=$goods_order_data item=list name=val}
@@ -28,7 +31,10 @@
       <td>{$list.goods_sn}</td>
       <td align="right">{$list.goods_num}</td>
       <td align="right">{$list.turnover}</td>
-      <td align="right">{$list.wvera_price}</td>
+	  <td align="right">退货数量</td>
+	  <td align="right">退货金额</td>
+	  <td align="right">损耗数量</td>
+	  <td align="right">{$list.wvera_price}</td>
     </tr>
   {foreachelse}
     <tr><td class="no-records" colspan="10">{$lang.no_records}</td></tr>
