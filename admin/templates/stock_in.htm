@@ -5,7 +5,7 @@
 <!-- 商品搜索 -->
 {include file="stock_search.htm"}
 <!-- 商品列表 -->
-<form method="post" action="goods.php" name="listForm" onsubmit="return confirmSubmit(this)">
+<form method="post" action="stock_in.php" name="listForm" onsubmit="return confirmSubmit(this)">
   <!-- start goods list -->
   <div class="list-div" id="listDiv">
 {/if}
@@ -19,7 +19,7 @@
     <th><a href="javascript:listTable.sort('goods_sn'); ">{$lang.goods_sn}</a>{$sort_goods_sn}</th>
     <th><a href="javascript:listTable.sort('shop_price'); ">{$lang.shop_price}</a>{$sort_shop_price}</th>
 	<th><a href="javascript:listTable.sort('goods_number'); ">现有库存</a>{$sort_goods_number}</th>
-    <th><a href="javascript:listTable.sort('in_stock'); ">进货量</a>{$sort_in_stock}</th>
+    <th>进货量{$sort_in_stock}</th>
     <th><a href="javascript:listTable.sort('in_time'); ">进货时间</a>{$sort_in_time}</th>
     <th><a href="javascript:listTable.sort('operation'); ">操作</a>{$sort_operation}</th>
   <tr>

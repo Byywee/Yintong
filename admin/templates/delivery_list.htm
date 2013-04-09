@@ -31,7 +31,7 @@
     <th><a href="javascript:listTable.sort('add_time', 'DESC'); ">{$lang.label_add_time}</a>{$sort_add_time}</th>
     <th><a href="javascript:listTable.sort('consignee', 'DESC'); ">{$lang.consignee}</a>{$sort_consignee}</th>
     <th><a href="javascript:listTable.sort('update_time', 'DESC'); ">{$lang.label_update_time}</a>{$sort_update_time}</th>
-    <th>{$lang.label_suppliers_name}</th>
+    <th>{$lang.label_invoice_no1}</th>
     <th>{$lang.label_delivery_status}</th>
     <th>{$lang.operator}</th>
     <th>{$lang.handler}</th>
@@ -43,10 +43,10 @@
     <td align="center" valign="top" nowrap="nowrap">{$delivery.add_time}</td>
     <td align="left" valign="top"><a href="mailto:{$delivery.email}"> {$delivery.consignee|escape}</a></td>
     <td align="center" valign="top" nowrap="nowrap">{$delivery.update_time}</td>
-    <td align="center" valign="top" nowrap="nowrap">{$delivery.suppliers_name}</td>
+	<td align="center" valign="top" nowrap="nowrap">{if $delivery.status_name=='正常'}<input type="text" name="invoice_no{$delivery.delivery_id}" value="{$delivery.invoice_no}"/>{else}{$delivery.invoice_no}{/if}</td>
     <td align="center" valign="top" nowrap="nowrap">{$delivery.status_name}</td>
     <td align="center" valign="top" nowrap="nowrap">{$delivery.action_user}</td>
-    <td align="center" valign="top"  nowrap="nowrap">
+    <td align="center" valign="top" nowrap="nowrap">
      <a href="order.php?act=delivery_info&delivery_id={$delivery.delivery_id}">{$lang.detail}</a>
      <a onclick="{if(confirm('{$lang.confirm_delete}')){return true;}return false;}" href="order.php?act=operate&remove_invoice=1&delivery_id={$delivery.delivery_id}">{$lang.remove}</a>
     </td>
@@ -68,6 +68,7 @@
     <div>
 
     <input name="remove_invoice" type="submit" id="btnSubmit3" value="{$lang.remove}" class="button" disabled="true" onclick="{if(confirm('{$lang.confirm_delete}')){return true;}return false;}" />
+    <input name="fahuo" type="submit" id="btnSubmit4" value="{$lang.op_ship}" class="button" disabled="true" />
   </div>
 </form>
 <script language="JavaScript">
@@ -89,8 +90,19 @@ listTable.filter.{$key} = '{$item}';
     }
 
     /**
+    *		批量录入发货编号
+    *
+    */
+    function op_ship()
+    {
+    	
+    }
+    
+    /**
      * 搜索订单
      */
+     
+     
     function searchOrder()
     {
         listTable.filter['order_sn'] = Utils.trim(document.forms['searchForm'].elements['order_sn'].value);

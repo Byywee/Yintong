@@ -53,6 +53,7 @@ $_LANG['label_operable_act'] = '当前可执行操作：';
 $_LANG['label_action_note'] = '操作备注：';
 $_LANG['label_invoice_note'] = '发货备注：';
 $_LANG['label_invoice_no'] = '发货单号：';
+$_LANG['label_invoice_no1'] = '发货单号';
 $_LANG['label_cancel_note'] = '取消原因：';
 $_LANG['notice_cancel_note'] = '（会记录在商家给客户的留言中）';
 $_LANG['op_confirm'] = '确认';
