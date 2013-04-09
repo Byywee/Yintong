@@ -6129,32 +6129,54 @@ function back_list()
         $aiax = isset($_GET['is_ajax']) ? $_GET['is_ajax'] : 0;
 
         /* 过滤信息 */
-        $filter['delivery_sn'] = empty($_REQUEST['delivery_sn']) ? '' : trim($_REQUEST['delivery_sn']);
+        /*$filter['delivery_sn'] = empty($_REQUEST['delivery_sn']) ? '' : trim($_REQUEST['delivery_sn']);*/
         $filter['order_sn'] = empty($_REQUEST['order_sn']) ? '' : trim($_REQUEST['order_sn']);
         $filter['order_id'] = empty($_REQUEST['order_id']) ? 0 : intval($_REQUEST['order_id']);
+		$filter['start_time'] = empty($_REQUEST['start_time']) ? 0 : strtotime($_REQUEST['start_time']);
+		$filter['end_time'] = empty($_REQUEST['end_time']) ? 0 : strtotime($_REQUEST['end_time']);
         if ($aiax == 1 && !empty($_REQUEST['consignee']))
         {
             $_REQUEST['consignee'] = json_str_iconv($_REQUEST['consignee']);
         }
         $filter['consignee'] = empty($_REQUEST['consignee']) ? '' : trim($_REQUEST['consignee']);
-
         $filter['sort_by'] = empty($_REQUEST['sort_by']) ? 'update_time' : trim($_REQUEST['sort_by']);
         $filter['sort_order'] = empty($_REQUEST['sort_order']) ? 'DESC' : trim($_REQUEST['sort_order']);
 
-        $where = 'WHERE 1 ';
+        $where = '';
         if ($filter['order_sn'])
         {
-            $where .= " AND order_sn LIKE '%" . mysql_like_quote($filter['order_sn']) . "%'";
-        }
-        if ($filter['consignee'])
-        {
-            $where .= " AND consignee LIKE '%" . mysql_like_quote($filter['consignee']) . "%'";
-        }
-        if ($filter['delivery_sn'])
-        {
-            $where .= " AND delivery_sn LIKE '%" . mysql_like_quote($filter['delivery_sn']) . "%'";
+            $where .= " AND bo.order_sn LIKE '%" . mysql_like_quote($filter['order_sn']) . "%'";
         }
 		
+		if ($filter['order_id'])
+        {
+            $where .= " AND bo.order_id LIKE '%" . mysql_like_quote($filter['order_id']) . "%'";
+        }
+		
+        if ($filter['consignee'])
+        {
+            $where .= " AND bo.consignee LIKE '%" . mysql_like_quote($filter['consignee']) . "%'";
+        }
+       /* if ($filter['delivery_sn'])
+        {
+            $where .= " AND delivery_sn LIKE '%" . mysql_like_quote($filter['delivery_sn']) . "%'";
+        }*/
+		
+		if($filter['end_time'] != 0 && $filter['start_time'] != 0)
+		{
+			if($filter['end_time'] > $filter['start_time'])
+			{
+				$where .= " and bo.add_time >= ".$filter['start_time']." and bo.add_time <= ".$filter['end_time'];
+			}
+			elseif($filter['end_time'] == $filter['start_time'])
+			{
+				$where .= " and bo.add_time = ".$filter['end_time'];
+			}
+			else
+			{
+				$where .= " and bo.add_time >= ".$filter['end_time']." and bo.add_time <= ".$filter['start_time'];
+			}
+		}
 		
         /* 获取管理员信息 */
         $admin_info = admin_info();
@@ -6190,18 +6212,18 @@ function back_list()
 		//刷新表
 	//	$sql_del_send_number = "delete from ecs_back_goods where send_number <= 0";
 	//	$GLOBALS['db']->query($sql_del_send_number);
-
 		
-		$sql_info  = " select bg.back_id back_id, bg.goods_sn goods_sn , bg.goods_name goods_name,"; 
-		$sql_info .= " bo.order_sn order_sn ,bo.add_time add_time, bo.return_time return_time, bg.send_number send_number,bo.deal_sale_return_status deal_sale_return_status, ";
-		$sql_info .= " bo.user_id user_id from ".$GLOBALS['ecs']->table('back_goods');
-		$sql_info .= " bg left join ".$GLOBALS['ecs']->table('back_order');
-		$sql_info .= " bo on bg.back_id = bo.back_id order by deal_sale_return_status,back_id desc";
-		
-		$sql_count  = " select count(*)"; 
-		$sql_count .= " from ".$GLOBALS['ecs']->table('back_goods');
-		$sql_count .= " bg right join ".$GLOBALS['ecs']->table('back_order');
-		$sql_count .= " bo on bg.back_id = bo.back_id ";
+			$sql_info  = " select bg.back_id back_id,bo.consignee consignee, bg.goods_sn goods_sn , bg.goods_name goods_name,"; 
+			$sql_info .= " bo.order_sn order_sn ,bo.add_time add_time, bo.return_time return_time, bg.send_number send_number,bo.deal_sale_return_status deal_sale_return_status,";
+			$sql_info .= " bo.user_id user_id from ".$GLOBALS['ecs']->table('back_goods');
+			$sql_info .= " bg left join ".$GLOBALS['ecs']->table('back_order');
+			$sql_info .= " bo on bg.back_id = bo.back_id ".$where." order by deal_sale_return_status,back_id desc ";
+			
+			$sql_count  = " select count(*)"; 
+			$sql_count .= " from ".$GLOBALS['ecs']->table('back_goods');
+			$sql_count .= " bg left join ".$GLOBALS['ecs']->table('back_order');
+			$sql_count .= " bo on bg.back_id = bo.back_id ";
+			$sql_count .= $where;
 		
 		//print($sql_info);print("<br />");
 		//print($sql_count);print("<br />");
@@ -6230,18 +6252,22 @@ function back_list()
     $row = $GLOBALS['db']->getAll($sql_info);
 
     /* 格式化数据 */
+	$rows = array();
+	
     foreach ($row AS $key => $value)
     {
 		//print_r($value);
+		
 		$sql = "select user_name from ".$GLOBALS['ecs']->table('users');
 		if($value['user_id'] == '')
 		{
 			$sql .= '';
 			$row[$key]['user_name'] = '';
+			continue;
 		}
 		else
 		{
-			$sql .= " where user_id = ".$value['user_id'];
+			$sql .= " where user_id = ".$value['user_id']." ".$where_name;
 			$row[$key]['user_name'] = $GLOBALS['db']->getOne($sql);
 		}
 	    //print($sql);
@@ -6256,11 +6282,10 @@ function back_list()
         {
         	$row[$key]['status_name'] = $GLOBALS['_LANG']['delivery_status'][0];
         }
-		
     }
 	
     $arr = array('back' => $row, 'filter' => $filter, 'page_count' => $filter['page_count'], 'record_count' => $filter['record_count']);
-
+	print_r($arr);
     return $arr;
 }
 

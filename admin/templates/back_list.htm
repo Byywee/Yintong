@@ -7,13 +7,13 @@
 <div class="form-div">
   <form action="javascript:searchOrder()" name="searchForm">
     <img src="images/icon_search.gif" width="26" height="22" border="0" alt="SEARCH" />
-    {$lang.label_delivery_sn}<input name="delivery_sn" type="text" id="delivery_sn" size="15">
+    <!--{$lang.label_delivery_sn}<input name="delivery_sn" type="text" id="delivery_sn" size="15">-->
     {$lang.order_sn}<input name="order_sn" type="text" id="order_sn" size="15">
     {$lang.consignee|escape}<input name="consignee" type="text" id="consignee" size="15">
-	{$lang.return_time}<input type="text" name="start_time" maxlength="60" size="20" readonly="readonly" id="start_time_id" />
+	{$lang.return_time}<input type="text" name="start_time" maxlength="60" size="20" readonly="readonly" id="start_time_id" value="{$time_yestoday}"/>
       <input name="start_time_btn" type="button" id="start_time_btn" onclick="return showCalendar('start_time_id', '%Y-%m-%d %H:%M', '24', false, 'start_time_btn');" value="{$lang.btn_select}" class="button"/>
       ~      
-      <input type="text" name="end_time" maxlength="60" size="20" readonly="readonly" id="end_time_id" />
+      <input type="text" name="end_time" maxlength="60" size="20" readonly="readonly" id="end_time_id" value="{$time_yestoday}"/>
       <input name="end_time_btn" type="button" id="end_time_btn" onclick="return showCalendar('end_time_id', '%Y-%m-%d %H:%M', '24', false, 'end_time_btn');" value="{$lang.btn_select}" class="button"/> 
     <input type="submit" value="{$lang.button_search}" class="button" />
   </form>
@@ -39,13 +39,13 @@
     <th>{$lang.handler}</th>
   <tr>
   {foreach from=$back_list item=back key=dkey}
-  {if $record_count gt 0}
+  {if $back.send_number > 0}
   <tr>
     <td valign="top" nowrap="nowrap"><input type="checkbox" name="back_id[]" value="{$back.back_id}" />{$back.back_id}</td>
     <td align="center" style="display:none">{$back.goods_sn}<br /></td>
     <td align="center" valign="top" nowrap="nowrap">{$back.goods_name}</td>
     <td align="center" valign="top" nowrap="nowrap">{$back.user_name}</td>
-    <td align="left" valign="top"><a href="mailto:{$back.email}">{$back.order_sn}</a></td>
+    <td align="left" valign="top">{$back.order_sn}</td>
     <td align="center" valign="top" nowrap="nowrap">{$back.return_time}</td>
     <td align="center" valign="top" nowrap="nowrap" style="display:none;">{$back.return_time}</td>
     <td align="center" valign="top" nowrap="nowrap">{$back.send_number}</td>
@@ -62,6 +62,8 @@
     </td>
   </tr>
   {/if}
+  {foreachelse}
+  <tr><td class="no-records" colspan="9">{$lang.no_records}</td></tr>
   {/foreach}
 </table>
 
@@ -106,7 +108,9 @@ listTable.filter.{$key} = '{$item}';
     {
         listTable.filter['order_sn'] = Utils.trim(document.forms['searchForm'].elements['order_sn'].value);
         listTable.filter['consignee'] = Utils.trim(document.forms['searchForm'].elements['consignee'].value);
-                listTable.filter['delivery_sn'] = document.forms['searchForm'].elements['delivery_sn'].value;
+		/*listTable.filter['delivery_sn'] = document.forms['searchForm'].elements['delivery_sn'].value;*/
+		listTable.filter['start_time'] = document.forms['searchForm'].elements['start_time'].value;
+        listTable.filter['end_time'] = document.forms['searchForm'].elements['end_time'].value;
         listTable.filter['page'] = 1;
                 listTable.query = "back_query";
         listTable.loadList();

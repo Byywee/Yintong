@@ -107,7 +107,7 @@ if($_REQUEST['act'] == 'stock_check')
 /*------------------------------------------------------ */
 elseif ($_REQUEST['act'] == 'query')
 {
-		$hint = $_REQUEST['hint'];
+		    $hint = $_REQUEST['hint'];
 			$goods_list = get_stock_check();
 			$smarty->assign('goods_list',   $goods_list['goods']);
 			$smarty->assign('filter',       $goods_list['filter']);
@@ -234,21 +234,6 @@ function list_link($is_add = true, $extension_code = '')
     return array('href' => $href, 'text' => $text);
 }
 
-//获取所有商品的库存数量
-//进货
-function get_stock()
-{
-	$sql_get_goods_stock_num  = " select goods_id,goods_name,goods_sn,shop_price,goods_number from ".$GLOBALS['ecs']->table('goods');
-	$goods_stock_num = $GLOBALS['db']->getAll($sql_get_goods_stock_num);
-	return $goods_stock_num;
-}
-//退货
-function get_return_stock()
-{
-	$sql_get_goods_stock_num  = " select goods_id,goods_name,goods_sn,shop_price,goods_number from ".$GLOBALS['ecs']->table('goods');
-	$goods_stock_num = $GLOBALS['db']->getAll($sql_get_goods_stock_num);
-	return $goods_stock_num;
-}
 
 //盘点
 function get_stock_count()
@@ -300,10 +285,6 @@ function get_stock_count()
 	return $goods;
 }
 
-
-//日结
-
-//进销存报表
 
 
 
@@ -375,33 +356,7 @@ function handle_volume_price($goods_id, $number_list, $price_list)
     }
 }
 
-/**
- * 修改商品库存
- * @param   string  $goods_id   商品编号，可以为多个，用 ',' 隔开
- * @param   string  $value      字段值
- * @return  bool
- */
-function update_goods_stock($goods_id, $value)
-{
-    if ($goods_id)
-    {
-        /* $res = $goods_number - $old_product_number + $product_number; */
-        $sql = "UPDATE " . $GLOBALS['ecs']->table('goods') . "
-                SET goods_number = goods_number + $value,
-                    last_update = '". gmtime() ."'
-                WHERE goods_id = '$goods_id'";
-        $result = $GLOBALS['db']->query($sql);
 
-        /* 清除缓存 */
-        clear_cache_files();
-
-        return $result;
-    }
-    else
-    {
-        return false;
-    }
-}
 
 function get_goodslist()
 {
