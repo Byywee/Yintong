@@ -56,6 +56,18 @@ if ($_REQUEST['act'] == 'order_query')
 /*------------------------------------------------------ */
 elseif($_REQUEST['act'] == 'back_cancel')
 {
+	
+	//$_REQUEST['mail']
+	$order['email'] =$_REQUEST['mail'];
+	$order['consignee']=$_REQUEST['user_name'];
+	$tpl['template_subject']='退货单提醒';
+	$content='你好，你的物品已经取消退货，感谢你的参与！';
+	send_mail($order['consignee'], $order['email'], $tpl['template_subject'], $content);
+	
+	
+	
+	
+	
 	if($_REQUEST['note'] == '')
 	{	
 			$sql_update_back_goods  = " update ecs_back_goods set ";
@@ -1247,6 +1259,17 @@ elseif ($_REQUEST['act'] == 'back_info')
 
 elseif ($_REQUEST['act'] == 'back_sales')
 {
+	//$_REQUEST['mail']
+	$order['email'] =$_REQUEST['mail'];
+	$order['consignee']=$_REQUEST['user_name'];
+	$tpl['template_subject']='退货单提醒';
+	$content='你好，你的物品已经确认退货，感谢你的参与！';
+	send_mail($order['consignee'], $order['email'], $tpl['template_subject'], $content);
+	
+	
+	
+	
+	
 //	print_r($_REQUEST);print("<br />");
 //	print_r($_POST);
 //	die;
@@ -3271,7 +3294,7 @@ elseif ($_REQUEST['act'] == 'operate')
     }
     
     /* 批量打印退货订单 */
-    elseif (isset($_POST['print_back']))
+     elseif (isset($_POST['print_back']))
     {
     	$back_id=$_REQUEST['checkboxes'];
     	//print_r($back_id);die;
@@ -3282,7 +3305,7 @@ elseif ($_REQUEST['act'] == 'operate')
     	}
     	foreach($back_id as $key=>$val)
     	{
-    		$sql="select user_id,return_time,order_sn,update_time,how_oos from " . $ecs->table('back_order') . "where back_id='".$back_id[$key]."'";
+    		$sql="select * from " . $ecs->table('back_order') . "where back_id='".$back_id[$key]."'";
     		$back_order=$db->getRow($sql);
     		
 			
@@ -3309,8 +3332,9 @@ elseif ($_REQUEST['act'] == 'operate')
 		    $back_order['region'] = $db->getOne($sql);
     		
 		    /* 是否保价 */
-		    $order['insure_yn'] = empty($order['insure_fee']) ? 0 : 1;
-		    
+		    $back_order['insure_yn'] = empty($back_order['insure_fee']) ? '是' : '否';
+		    $return_time = date('Y-m-d H:i:s',$back_order['return_time']);
+		    $update_time = date('Y-m-d H:i:s',$back_order['update_time']);
 		    
 		    
 		    /* 取得发货单商品 */
@@ -3318,50 +3342,90 @@ elseif ($_REQUEST['act'] == 'operate')
                   FROM " . $ecs->table('back_goods') . "
                   WHERE back_id = ".$back_id[$key];
 		    //die($goods_sql);
-		    $goods_list = $GLOBALS['db']->getAll($goods_sql);
-		    
+		    $goods = $GLOBALS['db']->getRow($goods_sql);
+		    /*取得商品的价格和属性*/
+		    $sql_p="select * from " .$ecs->table('order_goods')." where goods_id=".$goods['goods_id'];
+		    $goods1=$GLOBALS['db']->getRow($sql_p);
 		    // print_r($goods_list);die;
-		    /* 是否存在实体商品 */
-		    $exist_real_goods = 0;
-		    if ($goods_list)
-		    {
-		    	foreach ($goods_list as $value)
-		    	{
-		    		if ($value['is_real'])
-		    		{
-		    			$exist_real_goods++;
-		    		}
-		    	}
-		    }
-		    $sql_custome_note  = " select custom_com_note from ecs_order_goods";
-		    $sql_custome_note .= " where goods_id = ".$goods_list[0]['goods_id'];
-		    $sql_custome_note .= " and order_id in (select order_id from ecs_back_order where back_id = ".$back_id[$key].")";
-		    
-		    $back_order['custom_com_note'] = $GLOBALS['db']->getOne($sql_custome_note);
-		    $html	="<h1 align='center'>$_LANG[order_info]</h1>
+		    $formated_subtotal = $goods1['goods_price'] * $goods['send_number'];//小计
+		    date_default_timezone_set('Asia/Shanghai');//设置时间为上海的时间
+		    $print_time = date('Y-m-d H:i:s');//获取当前时间
+		    $action_user = $_SESSION['admin_name'];//获取当前操作者
+		    $html	="<h1 align='center'>退货单信息</h1>
 <table width='100%' cellpadding='1'>
     <tr>
         <td width='8%'>$_LANG[print_buy_name]</td>
         <td>$back_order[user_name]</td>
-        <td align='right'>$_LANG[label_order_time]</td><td>$back_order[return_time]<!-- 下订单时间 --></td>
-        <td align='right'>$_LANG[label_payment]</td><td>$back_order[pay_name]<!-- 支付方式 --></td>
+        <td align='right'>$_LANG[label_order_time]</td><td>$update_time<!-- 下订单时间 --></td>
+        <td align='right'>$_LANG[label_shipping]</td><td>$order[shipping_name]<!-- 配送方式 --></td>
         <td align='right'>$_LANG[print_order_sn]</td><td>$back_order[order_sn]<!-- 订单号 --></td>
     </tr>
     <tr>
-        <td>$_LANG[label_pay_time]</td><td>$back_order[update_time]</td><!-- 付款时间 -->
-        <td align='right'>缺货处理：</td><td>$back_order[how_oos]<!-- 缺货处理 --></td>
-        <td align='right'>$_LANG[label_shipping]</td><td>$order[shipping_name]<!-- 配送方式 --></td>
+    	<td>缺货处理：</td><td>$back_order[how_oos]<!-- 缺货处理 --></td>
+        <td align='right'>退货时间：</td><td>$return_time</td><!-- 退货时间 -->        
+        <td align='right'>配送费用：</td><td>$back_order[shipping_fee]<!-- 配送费用 --></td>
         <td align='right'>$_LANG[label_invoice_no]</td><td>$order[invoice_no] <!-- 发货单号 --></td>
     </tr>
     <tr>
-        <td>$_LANG[label_consignee_address]</td>
-        <td colspan='7'>
-        $order[region]&nbsp;$order[address]&nbsp;<!-- 收货人地址 -->
-        $_LANG[label_consignee]$order[consignee]&nbsp;<!-- 收货人姓名 -->
-         $order[zipcode]$_LANG[label_zipcode]$order[zipcode]&nbsp;<!-- 邮政编码 -->
-       	 $order[tel]$_LANG[label_tel]$order[tel]&nbsp; <!-- 联系电话 -->
-         $order[mobile]$_LANG[label_mobile]$order[mobile]<!-- 手机号码 -->
+    	<td>$_LANG[label_insure_yn]</td><td>$back_order[insure_yn]<!-- 是否价保 --></td>
+        <td align='right'>价保费用：</td><td>$back_order[insure_fee]</td><!-- 价保费用 -->        
+        <td align='right'></td><td></td>
+        <td></td>
+    </tr>
+    <tr><td colspan='8'><br /></td></tr>
+    
+    <tr>
+        <td colspan='8'>$_LANG[label_consignee]$back_order[consignee]<!-- 收货人姓名 --> &nbsp;
+       	$_LANG[label_shop_address]$back_order[address]<!-- 收货人地址 -->&nbsp;
+       	$_LANG[label_zipcode]$back_order[zipcode]   <!-- 邮政编码 -->  &nbsp;
+       	$_LANG[label_tel]$back_order[tel] <!-- 联系电话 --> &nbsp;
+       	$_LANG[label_mobile]$back_order[mobile] <!-- 手机号码 -->   &nbsp;
+       	$_LANG[label_email]$back_order[email] <!-- 电子邮件 -->   &nbsp;</td>
+    </tr>
+    <tr>   
+    </tr>    
+</table>
+<table width='100%' border='1' style='border-collapse:collapse;border-color:#000;'>
+    <tr align=center'>
+        <td bgcolor='#cccccc'>$_LANG[goods_name]  <!-- 商品名称 --></td>
+        <td bgcolor='#cccccc'>$_LANG[goods_sn]    <!-- 商品货号 --></td>
+        <td bgcolor='#cccccc'>$_LANG[goods_attr]  <!-- 商品属性 --></td>
+        <td bgcolor='#cccccc'>$_LANG[goods_price] <!-- 商品单价 --></td>
+        <td bgcolor='#cccccc'>退货数量<!-- 商品数量 --></td>
+        <td bgcolor='#cccccc'>$_LANG[subtotal]    <!-- 价格小计 --></td>
+    </tr>
+    <!-- {foreach from=$goods_list item=goods key=key} -->
+    <tr>
+        <td>$goods[goods_name]<!-- 商品名称 --></td>
+        <td>$goods[goods_sn] <!-- 商品货号 --></td>
+        <td>$goods1[goods_attr]<!-- 商品属性 --></td>
+        <td align='right'>$goods1[goods_price]&nbsp;<!-- 商品单价 --></td>
+        <td align='right'>$goods[send_number]&nbsp;<!-- 商品数量 --></td>
+        <td align='right'>$formated_subtotal&nbsp;<!-- 商品金额小计 --></td>
+    </tr>
+ 
+    <tr>
+        <!-- 发票抬头和发票内容 -->
+        <td colspan='4'>
         </td>
+        <!-- 商品总金额 -->
+        <td colspan='2' align='right'>$_LANG[label_goods_amount]$back_order[formated_goods_amount]</td>
+    </tr>
+</table>
+
+<table width='100%' border='0'>
+   
+    <tr></tr>
+    <tr></tr>
+    <tr></tr>
+    <tr><!-- 网店名称, 网店地址, 网店URL以及联系电话 -->
+        <td>
+        $shop_name（$shop_url）
+        $_LANG[label_shop_address]$back_order[address]&nbsp;&nbsp;$_LANG[label_service_phone]$back_order[tel]
+        </td>
+    </tr>
+    <tr align='right'><!-- 订单操作员以及订单打印的日期 -->
+        <td>$_LANG[label_print_time]$print_time&nbsp;&nbsp;&nbsp;$_LANG[action_user]$action_user</td>
     </tr>
 </table>
 
