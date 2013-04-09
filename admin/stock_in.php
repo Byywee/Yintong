@@ -45,7 +45,7 @@ if($_REQUEST['act'] == 'stock_in')
 		$goods_id=$_POST['checkboxes'];
 		$in_stock =array();
 		//便利进货量，把每个进货量放入数组中
-		foreach ($_POST['checkboxes'] as $key=>$value)
+		foreach ($goods_id as $key=>$value)
 		{
 			$in_stock[] = ($_POST['in_stock_'.$_POST['checkboxes'][$key]]);
 		}
@@ -53,14 +53,23 @@ if($_REQUEST['act'] == 'stock_in')
 		//便利id,根据每个ID吧语句执行一遍
 		foreach ($goods_id as $key=>$value)
 		{
+			
 			$in_stock1 ="update " .$ecs->table('goods'). " set goods_number = goods_number + $in_stock[$key] where goods_id ='$goods_id[$key]' ";
 			$in_stock2 ="insert into " .$ecs->table('stock_change')." (goods_id,goods_stock_num,goods_time,goods_op_type) values($goods_id[$key],$in_stock[$key],$date,1)";
 			if( $in_stock[$key]!="")
 			{
 				$db -> query($in_stock1);
 				$db -> query($in_stock2);
+				
 			}
+			
 		}
+		$link[0]['text'] = $_LANG['go_back'];
+		$link[0]['href'] = 'stock_in.php?act=stock_in';
+		
+		sys_msg( $_LANG['batch_stock_in_ok'] , 0, $link);
+		
+		
 	}
 	 $goods_list=stock_in();
 	 $a=$goods_list['goods'];
@@ -78,11 +87,11 @@ if($_REQUEST['act'] == 'stock_in')
 	 $smarty->assign('record_count', $goods_list['record_count']);
 	 $smarty->assign('page_count',   $goods_list['page_count']);
 	 $smarty->assign('cat_list',     cat_list(0, $cat_id));//搜索所有分类
-	 $smarty->assign('brand_list',   get_brand_list());//搜索所有品牌
-	
+	 $smarty->assign('brand_list',   get_brand_list());//搜索所有品牌	
 	 /* 显示商品信息页面 */
-	 assign_query_info();
+	 assign_query_info();	 
 	 $smarty->display("stock_in.htm");
+	
 }
 
 /*------------------------------------------------------ */

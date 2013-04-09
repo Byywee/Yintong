@@ -1164,6 +1164,7 @@ elseif ($_REQUEST['act'] == 'back_info')
     /* 如果管理员属于某个办事处，检查该订单是否也属于这个办事处 */
     $sql = "SELECT agency_id FROM " . $ecs->table('admin_user') . " WHERE user_id = '$_SESSION[admin_id]'";
     $agency_id = $db->getOne($sql);
+    //print_r($agency_id);die;
     if ($agency_id > 0)
     {
         if ($back_order['agency_id'] != $agency_id)
@@ -1175,6 +1176,7 @@ elseif ($_REQUEST['act'] == 'back_info')
         $sql = "SELECT agency_name FROM " . $ecs->table('agency') . " WHERE agency_id = '$agency_id' LIMIT 0, 1";
         $agency_name = $db->getOne($sql);
         $back_order['agency_name'] = $agency_name;
+        
     }
 
     /* 取得用户名 */
@@ -2684,6 +2686,7 @@ elseif ($_REQUEST['act'] == 'edit_templates')
 
 elseif ($_REQUEST['act'] == 'operate')
 {
+
     $order_id = '';
     /* 检查权限 */
     admin_priv('order_os_edit');
@@ -2729,14 +2732,16 @@ elseif ($_REQUEST['act'] == 'operate')
         $operation      = 'unpay';
     }
     /* 配货 */
-    elseif (isset($_POST['prepare']))
+    elseif (isset($_POST['prepare']) || isset($_GET['prepare']))
     {
+    	
         $require_note   = false;
         $action         = $_LANG['op_prepare'];
         $operation      = 'prepare';
+        
     }
     /* 分单 */
-    elseif (isset($_POST['ship']))
+    elseif (isset($_POST['ship'])||isset($_GET['ship']))
     {
         /* 查询：检查权限 */
         admin_priv('order_ss_edit');
@@ -3053,24 +3058,59 @@ elseif ($_REQUEST['act'] == 'operate')
         /* 返回 */
         sys_msg($_LANG['tips_delivery_del'], 0, array(array('href'=>'order.php?act=delivery_list' , 'text' => $_LANG['return_list'])));
     }
+	 /* 批量单发货发货 */
+    elseif (isset($_REQUEST['fahuo']))
+    {
+        
+        $delivery_id=$_REQUEST['delivery_id'];
+		
+		
+		//print_r($delivery_id);print_r($invoice_no);die;
+        $delivery_id = is_array($delivery_id) ? $delivery_id : array($delivery_id);
+		//$invoice_no=is_array($invoice_no) ? $invoice_no : array($invoice_no);
+        foreach($delivery_id as $key=>$val)
+        {
+			
+			$invoice_no=$_REQUEST['invoice_no'.$delivery_id[$key]];
+			$value_is = intval(trim($val));
+            // 更新:修改除发货单
+            $sql = "update  ".$ecs->table('delivery_order'). "set invoice_no='$invoice_no',status='0' WHERE delivery_id = '$value_is'";
+			//print_r($sql);die;
+            $db->query($sql);
+			$sql1= "select order_sn from ".$ecs->table('delivery_order'). " where delivery_id = '$value_is'" ;
+			//print_r($sql1);
+			$this_order_sn 	=	$db->getOne($sql1);
+			
+			$sql2 = "update  ".$ecs->table('order_info'). "set shipping_status='1' WHERE order_sn = '$this_order_sn'";
+			$db->query($sql2);
+        }
+
+        /* 返回 */
+        sys_msg($_LANG['op_ship'], 0, array(array('href'=>'order.php?act=delivery_list' , 'text' => $_LANG['return_list'])));
+    }
      /* 退货单删除 */
     elseif (isset($_REQUEST['remove_back']))
     {
         $back_id = $_REQUEST['back_id'];
+        $back_id = is_array($back_id) ? $back_id : array($back_id);
         /* 删除退货单 */
         if(is_array($back_id))
         {
         foreach ($back_id as $value_is)
             {
-                $sql = "DELETE FROM ".$ecs->table('back_order'). " WHERE back_id = '$value_is'";
+            	
+            	// 如果status是已发货并且发货单号不为空
+          
+                $sql = "DELETE FROM ".$ecs->table('back_goods'). " WHERE back_id = '$value_is'";
                 $db->query($sql);
             }
         }
         else
         {
-            $sql = "DELETE FROM ".$ecs->table('back_order'). " WHERE back_id = '$back_id'";
+            $sql = "DELETE FROM ".$ecs->table('back_goods'). " WHERE back_id = '$back_id'";
             $db->query($sql);
         }
+        
         /* 返回 */
         sys_msg($_LANG['tips_back_del'], 0, array(array('href'=>'order.php?act=back_list' , 'text' => $_LANG['return_list'])));
     }
@@ -3221,6 +3261,111 @@ elseif ($_REQUEST['act'] == 'operate')
         echo $html;
         exit;
     }
+    
+    /* 批量打印退货订单 */
+    elseif (isset($_POST['print_back']))
+    {
+    	$back_id=$_REQUEST['checkboxes'];
+    	//print_r($back_id);die;
+    	
+    	 if (empty($back_id))
+    	{
+    		sys_msg($_LANG['pls_select_order'],1);
+    	}
+    	foreach($back_id as $key=>$val)
+    	{
+    		$sql="select user_id,return_time,order_sn,update_time,how_oos from " . $ecs->table('back_order') . "where back_id='".$back_id[$key]."'";
+    		$back_order=$db->getRow($sql);
+    		
+			
+		    /* 取得用户名 */
+		    if ($back_order['user_id'] > 0)
+		    {
+		        $user = user_info($back_order['user_id']);
+		        if (!empty($user))
+		        {
+		            $back_order['user_name'] = $user['user_name'];
+		        }
+		     
+		    }
+		    
+		    /* 取得区域名 */
+		    $sql = "SELECT concat(IFNULL(c.region_name, ''), '  ', IFNULL(p.region_name, ''), " .
+		                "'  ', IFNULL(t.region_name, ''), '  ', IFNULL(d.region_name, '')) AS region " .
+		            "FROM " . $ecs->table('order_info') . " AS o " .
+		                "LEFT JOIN " . $ecs->table('region') . " AS c ON o.country = c.region_id " .
+		                "LEFT JOIN " . $ecs->table('region') . " AS p ON o.province = p.region_id " .
+		                "LEFT JOIN " . $ecs->table('region') . " AS t ON o.city = t.region_id " .
+		                "LEFT JOIN " . $ecs->table('region') . " AS d ON o.district = d.region_id " .
+		            "WHERE o.order_id = '" . $back_order['order_id'] . "'";
+		    $back_order['region'] = $db->getOne($sql);
+    		
+		    /* 是否保价 */
+		    $order['insure_yn'] = empty($order['insure_fee']) ? 0 : 1;
+		    
+		    
+		    
+		    /* 取得发货单商品 */
+		    $goods_sql = "SELECT *
+                  FROM " . $ecs->table('back_goods') . "
+                  WHERE back_id = ".$back_id[$key];
+		    //die($goods_sql);
+		    $goods_list = $GLOBALS['db']->getAll($goods_sql);
+		    
+		    // print_r($goods_list);die;
+		    /* 是否存在实体商品 */
+		    $exist_real_goods = 0;
+		    if ($goods_list)
+		    {
+		    	foreach ($goods_list as $value)
+		    	{
+		    		if ($value['is_real'])
+		    		{
+		    			$exist_real_goods++;
+		    		}
+		    	}
+		    }
+		    $sql_custome_note  = " select custom_com_note from ecs_order_goods";
+		    $sql_custome_note .= " where goods_id = ".$goods_list[0]['goods_id'];
+		    $sql_custome_note .= " and order_id in (select order_id from ecs_back_order where back_id = ".$back_id[$key].")";
+		    
+		    $back_order['custom_com_note'] = $GLOBALS['db']->getOne($sql_custome_note);
+		    $html	="<h1 align='center'>$_LANG[order_info]</h1>
+<table width='100%' cellpadding='1'>
+    <tr>
+        <td width='8%'>$_LANG[print_buy_name]</td>
+        <td>$back_order[user_name]</td>
+        <td align='right'>$_LANG[label_order_time]</td><td>$back_order[return_time]<!-- 下订单时间 --></td>
+        <td align='right'>$_LANG[label_payment]</td><td>$back_order[pay_name]<!-- 支付方式 --></td>
+        <td align='right'>$_LANG[print_order_sn]</td><td>$back_order[order_sn]<!-- 订单号 --></td>
+    </tr>
+    <tr>
+        <td>$_LANG[label_pay_time]</td><td>$back_order[update_time]</td><!-- 付款时间 -->
+        <td align='right'>缺货处理：</td><td>$back_order[how_oos]<!-- 缺货处理 --></td>
+        <td align='right'>$_LANG[label_shipping]</td><td>$order[shipping_name]<!-- 配送方式 --></td>
+        <td align='right'>$_LANG[label_invoice_no]</td><td>$order[invoice_no] <!-- 发货单号 --></td>
+    </tr>
+    <tr>
+        <td>$_LANG[label_consignee_address]</td>
+        <td colspan='7'>
+        $order[region]&nbsp;$order[address]&nbsp;<!-- 收货人地址 -->
+        $_LANG[label_consignee]$order[consignee]&nbsp;<!-- 收货人姓名 -->
+         $order[zipcode]$_LANG[label_zipcode]$order[zipcode]&nbsp;<!-- 邮政编码 -->
+       	 $order[tel]$_LANG[label_tel]$order[tel]&nbsp; <!-- 联系电话 -->
+         $order[mobile]$_LANG[label_mobile]$order[mobile]<!-- 手机号码 -->
+        </td>
+    </tr>
+</table>
+
+";
+		    
+		    echo $html;
+		    echo "<br />";
+		    
+    	}
+    	die;
+
+    }
     /* 去发货 */
     elseif (isset($_POST['to_delivery']))
     {
@@ -3229,7 +3374,8 @@ elseif ($_REQUEST['act'] == 'operate')
         ecs_header("Location: $url\n");
         exit;
     }
-
+	
+    
     /* 直接处理还是跳到详细页面 */
     if (($require_note && $action_note == '') || isset($show_invoice_no) || isset($show_refund))
     {
@@ -3550,15 +3696,16 @@ elseif ($_REQUEST['act'] == 'operate_post')
     /* 取得参数 */
     $order_id   = intval(trim($_REQUEST['order_id']));        // 订单id
     $operation  = $_REQUEST['operation'];       // 订单操作
-
-    /* 查询订单信息 */
+	//print_r($operation);
     $order = order_info($order_id);
-
+	
+	
     /* 检查能否操作 */
     $operable_list = operable_list($order);
+	//print_r($operable_list);die;
     if (!isset($operable_list[$operation]))
     {
-        die('Hacking attempt');
+        die('Hacking attempt111');
     }
 
     /* 取得备注信息 */
@@ -3652,6 +3799,7 @@ elseif ($_REQUEST['act'] == 'operate_post')
     /* 配货 */
     elseif ('prepare' == $operation)
     {
+	
         /* 标记订单为已确认，配货中 */
         if ($order['order_status'] != OS_CONFIRMED)
         {
@@ -3659,8 +3807,7 @@ elseif ($_REQUEST['act'] == 'operate_post')
             $arr['confirm_time']    = gmtime();
         }
         $arr['shipping_status']     = SS_PREPARING;
-        update_order($order_id, $arr);
-
+		update_order($order_id, $arr);
         /* 记录log */
         order_action($order['order_sn'], OS_CONFIRMED, SS_PREPARING, $order['pay_status'], $action_note);
 
@@ -5914,7 +6061,7 @@ function delivery_list()
         $filter['page_count']     = $filter['record_count'] > 0 ? ceil($filter['record_count'] / $filter['page_size']) : 1;
 
         /* 查询 */
-        $sql = "SELECT delivery_id, delivery_sn, order_sn, order_id, add_time, action_user, consignee, country,
+        $sql = "SELECT delivery_id, delivery_sn, order_sn, order_id, add_time, action_user, consignee, country, invoice_no,
                        province, city, district, tel, status, update_time, email, suppliers_id
                 FROM " . $GLOBALS['ecs']->table("delivery_order") . "
                 $where
@@ -5974,21 +6121,24 @@ function delivery_list()
 function back_list()
 {
     $result = get_filter();
+   
     if ($result === false)
     {
         $aiax = isset($_GET['is_ajax']) ? $_GET['is_ajax'] : 0;
 
         /* 过滤信息 */
-        $filter['delivery_sn'] = empty($_REQUEST['delivery_sn']) ? '' : trim($_REQUEST['delivery_sn']);
+        
         $filter['order_sn'] = empty($_REQUEST['order_sn']) ? '' : trim($_REQUEST['order_sn']);
-        $filter['order_id'] = empty($_REQUEST['order_id']) ? 0 : intval($_REQUEST['order_id']);
+        $filter['back_id'] = empty($_REQUEST['back_id']) ? 0 : intval($_REQUEST['back_id']);
         if ($aiax == 1 && !empty($_REQUEST['consignee']))
         {
             $_REQUEST['consignee'] = json_str_iconv($_REQUEST['consignee']);
         }
         $filter['consignee'] = empty($_REQUEST['consignee']) ? '' : trim($_REQUEST['consignee']);
-
-        $filter['sort_by'] = empty($_REQUEST['sort_by']) ? 'update_time' : trim($_REQUEST['sort_by']);
+        $filter['goods_name'] = empty($_REQUEST['goods_name']) ? '' : trim($_REQUEST['goods_name']);
+        $filter['user_name'] = empty($_REQUEST['user_name']) ? '' : trim($_REQUEST['user_name']);
+        $filter['return_time'] = empty($_REQUEST['return_time']) ? '' : trim($_REQUEST['return_time']);
+        $filter['sort_by'] = empty($_REQUEST['sort_by']) ? 'order_sn' : trim($_REQUEST['sort_by']);
         $filter['sort_order'] = empty($_REQUEST['sort_order']) ? 'DESC' : trim($_REQUEST['sort_order']);
 
         $where = 'WHERE 1 ';
@@ -6000,10 +6150,7 @@ function back_list()
         {
             $where .= " AND consignee LIKE '%" . mysql_like_quote($filter['consignee']) . "%'";
         }
-        if ($filter['delivery_sn'])
-        {
-            $where .= " AND delivery_sn LIKE '%" . mysql_like_quote($filter['delivery_sn']) . "%'";
-        }
+        
 		
 		
         /* 获取管理员信息 */
@@ -6046,7 +6193,7 @@ function back_list()
 		$sql_info .= " bo.order_sn order_sn ,bo.add_time add_time, bo.return_time return_time, bg.send_number send_number,bo.deal_sale_return_status deal_sale_return_status, ";
 		$sql_info .= " bo.user_id user_id from ".$GLOBALS['ecs']->table('back_goods');
 		$sql_info .= " bg left join ".$GLOBALS['ecs']->table('back_order');
-		$sql_info .= " bo on bg.back_id = bo.back_id order by deal_sale_return_status,back_id desc";
+		$sql_info .= " bo on bg.back_id = bo.back_id order by ". $filter['sort_by'] . " " . $filter['sort_order'];
 		
 		$sql_count  = " select count(*)"; 
 		$sql_count .= " from ".$GLOBALS['ecs']->table('back_goods');

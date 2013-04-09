@@ -122,7 +122,7 @@ $_LANG['lab_other_cat'] = '扩展分类：';
 $_LANG['lab_goods_brand'] = '商品品牌：';
 $_LANG['lab_shop_price'] = '本店售价：';
 $_LANG['lab_market_price'] = '市场售价：';
-$_LANG['lab_return_deadline'] = '请选择退货期限：';
+$_LANG['lab_return_able_date'] = '请选择退货期限：';
 $_LANG['lab_user_price'] = '会员价格：';
 $_LANG['lab_promote_price'] = '促销价：';
 $_LANG['lab_promote_date'] = '促销日期：';
@@ -206,11 +206,11 @@ $_LANG['lab_to_shopex']         = '转移到网店';
 /*------------------------------------------------------ */
 
 $_LANG['please_choose']					 ='请选择';
-$_LANG['return_deadline_oneweek']         = '一周';
-$_LANG['return_deadline_onemonth']        = '一个月';
-$_LANG['return_deadline_threemonths']      = '三个月';
-$_LANG['return_deadline_sixmonths']      = '六个月';
-$_LANG['return_deadline_oneyear']       = '一年';
+$_LANG['return_able_date_oneweek']         = '一周';
+$_LANG['return_able_date_onemonth']        = '一个月';
+$_LANG['return_able_date_threemonths']      = '三个月';
+$_LANG['return_able_date_sixmonths']      = '六个月';
+$_LANG['return_able_date_oneyear']       = '一年';
 
 
 

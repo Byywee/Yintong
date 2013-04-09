@@ -285,8 +285,15 @@ function limitvalue(){
           {if $cfg.use_storage}
           <tr>
             <td class="label"><a href="javascript:showNotice('noticeStorage');" title="{$lang.form_notice}"><img src="images/notice.gif" width="16" height="16" border="0" alt="{$lang.form_notice}"></a> {$lang.lab_goods_number}</td>
+
 <!--            <td><input type="text" name="goods_number" value="{$goods.goods_number}" size="20" {if $code neq '' || $goods._attribute neq ''}readonly="readonly"{/if} /><br />-->
-            <td><span>{$goods.goods_number}</span><br />
+           <!-- <td><span>{$goods.goods_number}</span><br />-->
+          
+            <td><span>{$goods.goods_number}<input type="hidden" name="goods_number" value="{$goods.goods_number}"/></span><br />
+
+<!--            <td><input type="text" name="goods_number" value="{$goods.goods_number}" size="20" {if $code neq '' || $goods._attribute neq ''}readonly="readonly"{/if} /><br />-->
+           <!--  <td><span>{$goods.goods_number}</span><br /> -->
+
             </td>
           </tr>
           <tr>
@@ -637,6 +644,13 @@ function limitvalue(){
   function priceSetted()
   {
     computePrice('market_price', marketPriceRate);
+<<<<<<< HEAD
+=======
+
+    computePrice('give_integral', integralPercent / 1);
+    computePrice('rank_integral', integralPercent / 1);
+
+>>>>>>> aa7ee5a179f9f2c6c89c6affc9b1f14069bddfac
     computePrice('integral', integralPercent / 100);
     {/literal}
     {foreach from=$user_rank_list item=item}
