@@ -18,6 +18,7 @@ $_LANG['copy_goods'] = '复制商品信息';
 $_LANG['continue_add_goods'] = '继续添加新商品';
 $_LANG['back_goods_list'] = '返回商品列表';
 $_LANG['add_goods_ok'] = '添加商品成功。';
+$_LANG['batch_stock_out_ok'] = '批量退货成功。';
 $_LANG['edit_goods_ok'] = '编辑商品成功。';
 $_LANG['trash_goods_ok'] = '把商品放入回收站成功。';
 $_LANG['restore_goods_ok'] = '还原商品成功。';

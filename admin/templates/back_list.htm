@@ -7,13 +7,12 @@
 <div class="form-div">
   <form action="javascript:searchOrder()" name="searchForm">
     <img src="images/icon_search.gif" width="26" height="22" border="0" alt="SEARCH" />
-    <!--{$lang.label_delivery_sn}<input name="delivery_sn" type="text" id="delivery_sn" size="15">-->
-    {$lang.order_sn}<input name="order_sn" type="text" id="order_sn" size="15">
+    {$lang.goods_name}<input name="order_sn" type="text" id="order_sn" size="15">
     {$lang.consignee|escape}<input name="consignee" type="text" id="consignee" size="15">
-	{$lang.return_time}<input type="text" name="start_time" maxlength="60" size="20" readonly="readonly" id="start_time_id" value="{$time_yestoday}"/>
+	{$lang.return_time}<input type="text" name="start_time" maxlength="60" size="20" readonly="readonly" id="start_time_id" />
       <input name="start_time_btn" type="button" id="start_time_btn" onclick="return showCalendar('start_time_id', '%Y-%m-%d %H:%M', '24', false, 'start_time_btn');" value="{$lang.btn_select}" class="button"/>
       ~      
-      <input type="text" name="end_time" maxlength="60" size="20" readonly="readonly" id="end_time_id" value="{$time_yestoday}"/>
+      <input type="text" name="end_time" maxlength="60" size="20" readonly="readonly" id="end_time_id" />
       <input name="end_time_btn" type="button" id="end_time_btn" onclick="return showCalendar('end_time_id', '%Y-%m-%d %H:%M', '24', false, 'end_time_btn');" value="{$lang.btn_select}" class="button"/> 
     <input type="submit" value="{$lang.button_search}" class="button" />
   </form>
@@ -27,25 +26,25 @@
 <table cellpadding="3" cellspacing="1">
   <tr>
     <th>
-      <input onclick='listTable.selectAll(this, "back_id")' type="checkbox"/><a href="javascript:listTable.sort('delivery_sn', 'DESC'); ">编号</a>
+      <input onclick='listTable.selectAll(this, "back_id")' type="checkbox"/><a href="javascript:listTable.sort('back_id', 'DESC'); ">编号</a>
     </th>
-    <th style="display:none"><a href="javascript:listTable.sort('order_sn', 'DESC'); ">商品编号</a></th>
-    <th><a href="javascript:listTable.sort('add_time', 'DESC'); ">商品名称</a>{$sort_add_time}</th>
-    <th><a href="javascript:listTable.sort('consignee', 'DESC'); ">所属用户</a>{$sort_consignee}</th>
-    <th><a href="javascript:listTable.sort('consignee', 'DESC'); ">所属订单</a>{$sort_consignee}</th>
-    <th><a href="javascript:listTable.sort('update_time', 'DESC'); ">退货时间</a></th>
+    <th style="display:none"><a href="javascript:listTable.sort('order_sn', 'DESC'); ">{$lang.order_sn}</a>{$sort_order_sn}</th>
+    <th><a href="javascript:listTable.sort('goods_name', 'DESC'); ">商品名称</a>{$sort_goods_name}</th>
+    <th><a href="javascript:listTable.sort('user_name', 'DESC'); ">所属用户</a>{$sort_user_name}</th>
+    <th><a href="javascript:listTable.sort('order_sn', 'DESC'); ">所属订单</a>{$sort_order_sn}</th>
+    <th><a href="javascript:listTable.sort('return_time', 'DESC'); ">退单时间</a>{$sort_return_time}</th>
     <th>退货数量</th>
-    <th>处理状态</th>
+    <th>订单处理</th>
     <th>{$lang.handler}</th>
   <tr>
-  {foreach from=$back_list item=back key=dkey}
-  
+  {foreach from=$back_list item=back key=bkey}
+  {if $record_count gt 0}
   <tr>
-    <td valign="top" nowrap="nowrap"><input type="checkbox" name="back_id[]" value="{$back.back_id}" />{$back.back_id}</td>
+    <td valign="top" nowrap="nowrap" style="text-align:center"><input type="checkbox" name="checkboxes[]" value="{$back.back_id}" />{$back.back_id}</td>
     <td align="center" style="display:none">{$back.goods_sn}<br /></td>
     <td align="center" valign="top" nowrap="nowrap">{$back.goods_name}</td>
     <td align="center" valign="top" nowrap="nowrap">{$back.user_name}</td>
-    <td align="left" valign="top">{$back.order_sn}</td>
+    <td align="left" valign="top" style="text-align:center"><a href="mailto:{$back.email}">{$back.order_sn}</a></td>
     <td align="center" valign="top" nowrap="nowrap">{$back.return_time}</td>
     <td align="center" valign="top" nowrap="nowrap" style="display:none;">{$back.return_time}</td>
     <td align="center" valign="top" nowrap="nowrap">{$back.send_number}</td>
@@ -61,8 +60,7 @@
     <!-- <a onclick="{if(confirm('{$lang.confirm_delete}')){return true;}return false;}" href="order.php?act=operate&remove_back=1&back_id={$back.back_id}">{$lang.remove}</a>-->
     </td>
   </tr>
-  {foreachelse}
-  <tr><td class="no-records" colspan="9">{$lang.no_records}</td></tr>
+  {/if}
   {/foreach}
 </table>
 
@@ -80,6 +78,8 @@
   <div>
     <input name="remove_back" type="submit" id="btnSubmit3" value="{$lang.remove}" class="button" disabled="true" onclick="{if(confirm('{$lang.confirm_delete}')){return true;}return false;}" />
   	<input name="print_back" type="submit" id="btnSubmit4" value="{$lang.print_order}" class="button" disabled="true" onclick="this.form.target = '_blank'" />
+ 	<input name="batch" type="hidden" value="1" />
+    <input name="back_id" type="hidden" value="" />
   </div>
 </form>
 <script language="JavaScript">
@@ -107,9 +107,7 @@ listTable.filter.{$key} = '{$item}';
     {
         listTable.filter['order_sn'] = Utils.trim(document.forms['searchForm'].elements['order_sn'].value);
         listTable.filter['consignee'] = Utils.trim(document.forms['searchForm'].elements['consignee'].value);
-		/*listTable.filter['delivery_sn'] = document.forms['searchForm'].elements['delivery_sn'].value;*/
-		listTable.filter['start_time'] = document.forms['searchForm'].elements['start_time'].value;
-        listTable.filter['end_time'] = document.forms['searchForm'].elements['end_time'].value;
+                
         listTable.filter['page'] = 1;
                 listTable.query = "back_query";
         listTable.loadList();

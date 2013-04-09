@@ -64,7 +64,7 @@ $_LANG['surplus_amount'] = '您的充值金额为：';
 $_LANG['payment_name'] = '您选择的支付方式为：';
 $_LANG['payment_fee'] = '支付手续费用为：';
 $_LANG['payment_desc'] = '支付方式描述：';
-$_LANG['current_surplus'] = '您当前的可用 币为：';
+$_LANG['current_surplus'] = '您当前的可用欢购币为：';
 $_LANG['unit_yuan'] = '元';
 $_LANG['for_free'] = '赠品免费';
 $_LANG['surplus_amount_error'] = '您要申请提现的金额超过了您现有的余额，此操作将不可进行！';
@@ -76,6 +76,9 @@ $_LANG['back_account_log'] = '返回帐户明细列表';
 $_LANG['amount_gt_zero'] = '请在“金额”栏输入大于0的数字';
 $_LANG['select_payment_pls'] = '请选择支付方式';
 $_LANG['password_null'] = '密码不能为空啊啊！！！';
+$_LANG['hgcharge'] = '欢购卡充值';
+$_LANG['hgcard_id'] = '欢购帐号:';
+$_LANG['hgcard_pwd'] = '欢购密码:';
 
 //JS语言项
 $_LANG['account_js']['surplus_amount_empty'] = '请输入您要操作的金额数量！';
@@ -139,10 +142,10 @@ $_LANG['edit_profile_success'] = '您的个人资料已经成功修改！';
 $_LANG['edit_profile_failed'] = '修改个人资料操作失败！';
 $_LANG['oldpassword_error'] = '您输入的旧密码有误!请确认再后输入！';
 
-// 卡充值反馈信息
+//欢购卡充值反馈信息
 $_LANG['hgcard_password_error'] = '您输入的密码有误，请核实！';
-$_LANG['hgcard_over_date'] = 'I am so sorry,您的 卡已过期！';
-$_LANG['hgcard_unvalidate'] = '抱歉啦，您的 卡已经用过了，不能再用啦！';
+$_LANG['hgcard_over_date'] = 'I am so sorry,您的欢购卡已过期！';
+$_LANG['hgcard_unvalidate'] = '抱歉啦，您的欢购卡已经用过了，不能再用啦！';
 $_LANG['card_id_null'] = '您输入的卡号为空，请核实，谢谢！';
 
 //JS语言项
@@ -457,6 +460,7 @@ $_LANG['welcome_to'] = '欢迎您回到';
 $_LANG['last_time'] = '您的上一次登录时间';
 $_LANG['your_account'] = '您的账户';
 $_LANG['your_notice'] = '用户提醒';
+$_LANG['your_surplus'] = '欢购币';
 $_LANG['credit_line'] = '信用额度';
 $_LANG['your_bonus'] = '红包';
 $_LANG['your_message'] = '留言';
@@ -615,8 +619,8 @@ $_LANG['affiliate_num'] = '人数';
 $_LANG['affiliate_view'] = '效果';
 $_LANG['affiliate_code'] = '代码';
 
-$_LANG['register_affiliate'] = '推荐会员ID %s ( %s ) 注册送 币';
-$_LANG['register_points'] = '注册送 币';
+$_LANG['register_affiliate'] = '推荐会员ID %s ( %s ) 注册送欢购币';
+$_LANG['register_points'] = '注册送欢购币';
 
 $_LANG['validate_ok'] = '%s 您好，您email %s 已通过验证';
 $_LANG['validate_fail'] = '验证失败，请确认你的验证链接是否正确';
