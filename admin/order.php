@@ -1267,11 +1267,7 @@ elseif ($_REQUEST['act'] == 'back_sales')
 	$tpl['template_subject']='退货单提醒';
 	$content='你好，你的物品已经确认退货，感谢你的参与！';
 	send_mail($order['consignee'], $order['email'], $tpl['template_subject'], $content);
-	
-	
-	
-	
-	
+		
 //	print_r($_REQUEST);print("<br />");
 //	print_r($_POST);
 //	die;
@@ -6257,12 +6253,12 @@ function back_list()
 		$sql_info .= " bo.order_sn order_sn ,bo.add_time add_time, bo.return_time return_time, bg.send_number send_number,bo.deal_sale_return_status deal_sale_return_status, ";
 		$sql_info .= " bo.user_id user_id from ".$GLOBALS['ecs']->table('back_goods');
 		$sql_info .= " bg left join ".$GLOBALS['ecs']->table('back_order');
-		$sql_info .= " bo on bg.back_id = bo.back_id order by ". $filter['sort_by'] . " " . $filter['sort_order'];
+		$sql_info .= " bo on bg.back_id = bo.back_id ".$where. " order by ". $filter['sort_by'] . " " . $filter['sort_order'];
 		
 		$sql_count  = " select count(*)"; 
 		$sql_count .= " from ".$GLOBALS['ecs']->table('back_goods');
-		$sql_count .= " bg right join ".$GLOBALS['ecs']->table('back_order');
-		$sql_count .= " bo on bg.back_id = bo.back_id ";
+		$sql_count .= " bg left join ".$GLOBALS['ecs']->table('back_order');
+		$sql_count .= " bo on bg.back_id = bo.back_id ".$where;
 		
 		//print($sql_info);print("<br />");
 		//print($sql_count);print("<br />");
