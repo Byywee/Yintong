@@ -42,12 +42,12 @@ if (isset($_REQUEST['act']) && ($_REQUEST['act'] == 'query' ||  $_REQUEST['act']
         header("Content-Disposition: attachment; filename=$filename.xls");
 
         $data  = "$_LANG[sell_stats]\t\n";
-        $data .= "$_LANG[order_by]\t$_LANG[goods_name]\t$_LANG[goods_sn]\t$_LANG[sell_amount]\t$_LANG[sell_sum]\t$_LANG[percent_count]\n";
+        $data .= "$_LANG[order_by]\t$_LANG[goods_name]\t$_LANG[goods_sn]\t$_LANG[sell_amount]\t$_LANG[label_goods_number]\\t$_LANG[label_send_number]\t$_LANG[label_send_number_money]\t$_LANG[lable_loss_num]\t$_LANG[sell_sum]\t$_LANG[percent_count]\n";
 
         foreach ($goods_order_data AS $k => $row)
         {
             $order_by = $k + 1;
-            $data .= "$order_by\t$row[goods_name]\t$row[goods_sn]\t$row[goods_num]\t$row[turnover]\t$row[wvera_price]\n";
+            $data .= "$order_by\t$row[goods_name]\t$row[goods_sn]\t$row[goods_num]\t$row[goods_number]\t$row[back]\t$row[back_money]\t$row[loss]\t$row[turnover]\t$row[wvera_price]\n";
         }
 
         if (EC_CHARSET == 'utf-8')
@@ -119,8 +119,15 @@ function get_sales_order($is_pagination = true)
     $filter['end_date'] = empty($_REQUEST['end_date']) ? '' : local_strtotime($_REQUEST['end_date']);
     $filter['sort_by'] = empty($_REQUEST['sort_by']) ? 'goods_num' : trim($_REQUEST['sort_by']);
     $filter['sort_order'] = empty($_REQUEST['sort_order']) ? 'DESC' : trim($_REQUEST['sort_order']);
+	$filter['compare'] = empty($_REQUEST['compare']) ? '' : $_REQUEST['compare'];
+	$filter['query_goods_number'] = empty($_REQUEST['query_goods_number']) ? 0 : $_REQUEST['query_goods_number'];
 
     $where = " WHERE og.order_id = oi.order_id ". order_query_sql('finished', 'oi.');
+	
+	if( $filter['compare'] != '' && $filter['query_goods_number'] != 0)
+	{
+		 $where_get_goods = " and goods_number ".$filter['compare']." ".$filter['query_goods_number']." ";
+	}
 
     if ($filter['start_date'])
     {
@@ -159,6 +166,29 @@ function get_sales_order($is_pagination = true)
         $sales_order_data[$key]['short_name']  = sub_str($item['goods_name'], 30, true);
         $sales_order_data[$key]['turnover']    = price_format($item['turnover']);
         $sales_order_data[$key]['taxis']       = $key + 1;
+		
+		//获取耗损数量
+		$sql_get_stock_loss_num   = " select sum(goods_stock_num) from ".$GLOBALS['ecs']->table('stock_change');
+		$sql_get_stock_loss_num  .= " where goods_id = ".$item['goods_id']." and goods_op_type = 3";
+		
+		//获取退货数量
+		$sql_get_sale_back_num = " select sum(send_number) from ".$GLOBALS['ecs']->table('stock_change')." where goods_id = ".$item['goods_id'];
+		
+		//获取商品库存数量
+		$sql_get_goods_num = " select goods_number from ".$GLOBALS['ecs']->table('goods')." where goods_id = ".$item['goods_id']." ".$where_get_goods;
+		
+		//获取退货金额
+		$sql_get_sale_back_money  = " select sum(eb.send_number*goods_price) from ";
+		$sql_get_sale_back_money .= $GLOBALS['ecs']->table('back_goods')." eb, ".$GLOBALS['ecs']->table('order_goods')." eo ";
+		$sql_get_sale_back_money .= " where eb.goods_id=eo.goods_id and eb.goods_id = ".$item['goods_id'];
+		
+		if($item['goods_id'] != 0)
+		{
+			$sales_order_data[$key]['goods_number'] = $GLOBALS['db'] -> getOne($sql_get_goods_num);
+			$sales_order_data[$key]['loss'] = $GLOBALS['db'] -> getOne($sql_get_stock_loss_num);
+			$sales_order_data[$key]['back'] = $GLOBALS['db'] -> getOne($sql_get_sale_back_num);
+			$sales_order_data[$key]['back_money'] = $GLOBALS['db'] -> getOne($sql_get_sale_back_money);
+		}
     }
 
     $arr = array('sales_order_data' => $sales_order_data, 'filter' => $filter, 'page_count' => $filter['page_count'], 'record_count' => $filter['record_count']);

@@ -70,6 +70,7 @@ elseif ($_REQUEST['act'] == 'list')
 {
     /* 模板赋值 */
     $smarty->assign('ur_here',     $_LANG['admin_role']);
+	$smarty->assign('download_link',      array('href' => '#download' ,'text' => $_LANG['download_role']));
     $smarty->assign('action_link', array('href'=>'role.php?act=add', 'text' => $_LANG['admin_add_role']));
     $smarty->assign('full_page',   1);
     $smarty->assign('admin_list',  get_role_list());
@@ -84,6 +85,33 @@ elseif ($_REQUEST['act'] == 'list')
 /*------------------------------------------------------ */
 elseif ($_REQUEST['act'] == 'query')
 {
+	if($_REQUEST['download'] == 'download')
+	{
+		 $roles_data = get_role_list();
+
+         $filename = date('YmdHis',time())."";
+
+        header("Content-type: application/vnd.ms-excel; charset=utf-8");
+        header("Content-Disposition: attachment; filename=$filename.xls");
+
+        $data  = "序号\t角色名称\t角色动作\t角色描述\t\n";
+
+        foreach ($roles_data AS $k => $row)
+        {
+            $order_by = $k + 1;
+            $data .= "$row[role_id]\t$row[role_name]\t$row[action_list]\t$row[role_describe]";
+        }
+
+        if (EC_CHARSET == 'utf-8')
+        {
+            echo ecs_iconv(EC_CHARSET, 'GB2312', $data);
+        }
+        else
+        {
+            echo $data;
+        }
+        exit;
+	}
     $smarty->assign('admin_list',  get_role_list());
 
     make_json_result($smarty->fetch('role_list.htm'));
