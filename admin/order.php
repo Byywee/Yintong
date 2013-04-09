@@ -3340,21 +3340,38 @@ elseif ($_REQUEST['act'] == 'operate')
         <td align='right'>$_LANG[print_order_sn]</td><td>$back_order[order_sn]<!-- 订单号 --></td>
     </tr>
     <tr>
-        <td>$_LANG[label_pay_time]</td><td>$back_order[update_time]</td><!-- 付款时间 -->
-        <td align='right'>缺货处理：</td><td>$back_order[how_oos]<!-- 缺货处理 --></td>
+    	<td>缺货处理：</td><td>$back_order[how_oos]<!-- 缺货处理 --></td>
+        <td align='right'>退货时间：</td><td>$back_order[update_time]</td><!-- 退货时间 -->        
         <td align='right'>$_LANG[label_shipping]</td><td>$order[shipping_name]<!-- 配送方式 --></td>
         <td align='right'>$_LANG[label_invoice_no]</td><td>$order[invoice_no] <!-- 发货单号 --></td>
     </tr>
     <tr>
-        <td>$_LANG[label_consignee_address]</td>
+    	<td>是否价保：</td><td>$back_order[how_oos]<!-- 是否价保 --></td>
+        <td align='right'>价保费用：</td><td>$back_order[update_time]</td><!-- 价保费用 -->        
+        <td align='right'>配送费用：</td><td>$back_order[shipping_name]<!-- 配送费用 --></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>$_lang[label_consignee_address]</td>
         <td colspan='7'>
-        $order[region]&nbsp;$order[address]&nbsp;<!-- 收货人地址 -->
-        $_LANG[label_consignee]$order[consignee]&nbsp;<!-- 收货人姓名 -->
-         $order[zipcode]$_LANG[label_zipcode]$order[zipcode]&nbsp;<!-- 邮政编码 -->
-       	 $order[tel]$_LANG[label_tel]$order[tel]&nbsp; <!-- 联系电话 -->
-         $order[mobile]$_LANG[label_mobile]$order[mobile]<!-- 手机号码 -->
+        $back_order[region]&nbsp;$back_order[address]&nbsp;<!-- 收货人地址 -->
+       $_lang[label_consignee]$back_order[consignee]&nbsp;<!-- 收货人姓名 -->
+       if($back_order[zipcode])
+       {
+    	$_lang[label_zipcode]$back_order[zipcode]&nbsp;<!-- 邮政编码 -->
+    	}
+    	if($back_order[tel])
+    	{
+    	$_lang[label_tel]$back_order[tel]&nbsp;<!-- 联系电话 -->
+    	}
+    	if($back_order[mobile])
+    	{
+    	$_lang[label_mobile]$back_order[mobile]<!-- 手机号码 -->
+    	}
+       
         </td>
     </tr>
+    
 </table>
 
 ";
