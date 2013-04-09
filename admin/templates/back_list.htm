@@ -27,21 +27,24 @@
 <table cellpadding="3" cellspacing="1">
   <tr>
     <th>
-      <input onclick='listTable.selectAll(this, "back_id")' type="checkbox"/><a href="javascript:listTable.sort('back_id', 'DESC'); ">编号</a>
+     <input onclick='listTable.selectAll(this, "checkboxes")' type="checkbox"/>
+	 <a href="javascript:listTable.sort('back_id', 'DESC'); ">编号</a>{$sort_back_id}
     </th>
     <th style="display:none"><a href="javascript:listTable.sort('order_sn', 'DESC'); ">{$lang.order_sn}</a>{$sort_order_sn}</th>
     <th><a href="javascript:listTable.sort('goods_name', 'DESC'); ">商品名称</a>{$sort_goods_name}</th>
     <th><a href="javascript:listTable.sort('user_name', 'DESC'); ">所属用户</a>{$sort_user_name}</th>
     <th><a href="javascript:listTable.sort('order_sn', 'DESC'); ">所属订单</a>{$sort_order_sn}</th>
-    <th><a href="javascript:listTable.sort('return_time', 'DESC'); ">退单时间</a>{$sort_return_time}</th>
+    <th><a href="javascript:listTable.sort('return_time', 'DESC'); ">退货时间</a>{$sort_return_time}</th>
     <th>退货数量</th>
-    <th>订单处理</th>
+    <th>处理状态</th>
     <th>{$lang.handler}</th>
   <tr>
   {foreach from=$back_list item=back key=bkey}
   {if $record_count gt 0}
   <tr>
-    <td valign="top" nowrap="nowrap" style="text-align:center"><input type="checkbox" name="checkboxes[]" value="{$back.back_id}" />{$back.back_id}</td>
+    <td valign="top" nowrap="nowrap" style="text-align:center">
+	<input type="checkbox" name="checkboxes[]" value="{$back.back_id}" />{$back.back_id}
+	</td>
     <td align="center" style="display:none">{$back.goods_sn}<br /></td>
     <td align="center" valign="top" nowrap="nowrap">{$back.goods_name}</td>
     <td align="center" valign="top" nowrap="nowrap">{$back.user_name}</td>
