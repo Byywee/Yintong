@@ -6142,7 +6142,7 @@ function back_list()
         $filter['sort_by'] = empty($_REQUEST['sort_by']) ? 'update_time' : trim($_REQUEST['sort_by']);
         $filter['sort_order'] = empty($_REQUEST['sort_order']) ? 'DESC' : trim($_REQUEST['sort_order']);
 
-        $where = '';
+        $where = ' where bo.back_id>0 ';
         if ($filter['order_sn'])
         {
             $where .= " AND bo.order_sn LIKE '%" . mysql_like_quote($filter['order_sn']) . "%'";
@@ -6215,14 +6215,14 @@ function back_list()
 		
 			$sql_info  = " select bg.back_id back_id,bo.consignee consignee, bg.goods_sn goods_sn , bg.goods_name goods_name,"; 
 			$sql_info .= " bo.order_sn order_sn ,bo.add_time add_time, bo.return_time return_time, bg.send_number send_number,bo.deal_sale_return_status deal_sale_return_status,";
-			$sql_info .= " bo.user_id user_id from ".$GLOBALS['ecs']->table('back_goods');
-			$sql_info .= " bg left join ".$GLOBALS['ecs']->table('back_order');
-			$sql_info .= " bo on bg.back_id = bo.back_id ".$where." order by deal_sale_return_status,back_id desc ";
+			$sql_info .= " bo.user_id user_id from ".$GLOBALS['ecs']->table('back_order');
+			$sql_info .= " bo right join ".$GLOBALS['ecs']->table('back_goods');
+			$sql_info .= " bg on bg.back_id = bo.back_id ".$where." order by deal_sale_return_status,back_id desc ";
 			
 			$sql_count  = " select count(*)"; 
-			$sql_count .= " from ".$GLOBALS['ecs']->table('back_goods');
-			$sql_count .= " bg left join ".$GLOBALS['ecs']->table('back_order');
-			$sql_count .= " bo on bg.back_id = bo.back_id ";
+			$sql_count .= " from ".$GLOBALS['ecs']->table('back_order');
+			$sql_count .= " bo right join ".$GLOBALS['ecs']->table('back_goods');
+			$sql_count .= " bg on bg.back_id = bo.back_id ";
 			$sql_count .= $where;
 		
 		//print($sql_info);print("<br />");
@@ -6252,7 +6252,6 @@ function back_list()
     $row = $GLOBALS['db']->getAll($sql_info);
 
     /* 格式化数据 */
-	$rows = array();
 	
     foreach ($row AS $key => $value)
     {
@@ -6263,11 +6262,10 @@ function back_list()
 		{
 			$sql .= '';
 			$row[$key]['user_name'] = '';
-			continue;
 		}
 		else
 		{
-			$sql .= " where user_id = ".$value['user_id']." ".$where_name;
+			$sql .= " where user_id = ".$value['user_id']." ";
 			$row[$key]['user_name'] = $GLOBALS['db']->getOne($sql);
 		}
 	    //print($sql);
@@ -6285,7 +6283,7 @@ function back_list()
     }
 	
     $arr = array('back' => $row, 'filter' => $filter, 'page_count' => $filter['page_count'], 'record_count' => $filter['record_count']);
-	print_r($arr);
+	
     return $arr;
 }
 

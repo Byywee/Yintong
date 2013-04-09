@@ -33,13 +33,13 @@
     <th><a href="javascript:listTable.sort('add_time', 'DESC'); ">商品名称</a>{$sort_add_time}</th>
     <th><a href="javascript:listTable.sort('consignee', 'DESC'); ">所属用户</a>{$sort_consignee}</th>
     <th><a href="javascript:listTable.sort('consignee', 'DESC'); ">所属订单</a>{$sort_consignee}</th>
-    <th><a href="javascript:listTable.sort('update_time', 'DESC'); ">退单时间</a></th>
+    <th><a href="javascript:listTable.sort('update_time', 'DESC'); ">退货时间</a></th>
     <th>退货数量</th>
-    <th>订单处理</th>
+    <th>处理状态</th>
     <th>{$lang.handler}</th>
   <tr>
   {foreach from=$back_list item=back key=dkey}
-  {if $back.send_number > 0}
+  
   <tr>
     <td valign="top" nowrap="nowrap"><input type="checkbox" name="back_id[]" value="{$back.back_id}" />{$back.back_id}</td>
     <td align="center" style="display:none">{$back.goods_sn}<br /></td>
@@ -61,7 +61,6 @@
     <!-- <a onclick="{if(confirm('{$lang.confirm_delete}')){return true;}return false;}" href="order.php?act=operate&remove_back=1&back_id={$back.back_id}">{$lang.remove}</a>-->
     </td>
   </tr>
-  {/if}
   {foreachelse}
   <tr><td class="no-records" colspan="9">{$lang.no_records}</td></tr>
   {/foreach}
