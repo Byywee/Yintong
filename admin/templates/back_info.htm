@@ -153,7 +153,7 @@
   {foreach from=$goods_list item=goods}
   <tr>
     <td>
-    <form action="order.php?act=back_sales&user_name={$back_order.user_name}&mail={$back_order.email}" name="salesbackForm" method="post">
+    <form action="order.php?act=back_sales" name="salesbackForm" method="post">
     {if $goods.goods_id gt 0 && $goods.extension_code neq 'package_buy'}
     <a href="../goods.php?id={$goods.goods_id}" target="_blank">{$goods.goods_name} {if $goods.brand_name}[ {$goods.brand_name} ]{/if}
     {/if}
@@ -176,10 +176,9 @@
     	<script type="text/javascript" language="javascript">
 			function back_cancel()
 			{
-				var url = "order.php?act=back_cancel&back_id={$goods.back_id}&user_name={$back_order.user_name}&mail={$back_order.email}&back_num={$goods.send_number}&order_id={$back_order.order_id}";
+				var url = "order.php?act=back_cancel&back_id={$goods.back_id}&back_num={$goods.send_number}&order_id={$back_order.order_id}";
 				window.location.href = url;
 			}
-			
 		</script>
 		<input type="checkbox" value="change_inventory" name="change_inventory">{$lang.change_inventory}
 		&nbsp;&nbsp;&nbsp;&nbsp;

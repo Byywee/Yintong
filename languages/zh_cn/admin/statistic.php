@@ -78,7 +78,6 @@ $_LANG['goods_name'] = '商品名称';
 $_LANG['sell_amount'] = '销售量';
 $_LANG['sell_sum'] = '销售额';
 $_LANG['percent_count'] = '均价';
-
 $_LANG['label_send_number'] = '退货数量';
 $_LANG['label_send_number_money'] = '退货金额';
 $_LANG['lable_loss_number'] = '损耗数量';
