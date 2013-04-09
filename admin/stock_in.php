@@ -45,7 +45,7 @@ if($_REQUEST['act'] == 'stock_in')
 		$goods_id=$_POST['checkboxes'];
 		$in_stock =array();
 		//便利进货量，把每个进货量放入数组中
-		foreach ($goods_id as $key=>$value)
+		foreach ($_POST['checkboxes'] as $key=>$value)
 		{
 			$in_stock[] = ($_POST['in_stock_'.$_POST['checkboxes'][$key]]);
 		}
@@ -53,23 +53,14 @@ if($_REQUEST['act'] == 'stock_in')
 		//便利id,根据每个ID吧语句执行一遍
 		foreach ($goods_id as $key=>$value)
 		{
-			
 			$in_stock1 ="update " .$ecs->table('goods'). " set goods_number = goods_number + $in_stock[$key] where goods_id ='$goods_id[$key]' ";
 			$in_stock2 ="insert into " .$ecs->table('stock_change')." (goods_id,goods_stock_num,goods_time,goods_op_type) values($goods_id[$key],$in_stock[$key],$date,1)";
 			if( $in_stock[$key]!="")
 			{
 				$db -> query($in_stock1);
 				$db -> query($in_stock2);
-				
 			}
-			
 		}
-		$link[0]['text'] = $_LANG['go_back'];
-		$link[0]['href'] = 'stock_in.php?act=stock_in';
-		
-		sys_msg( $_LANG['batch_stock_in_ok'] , 0, $link);
-		
-		
 	}
 	 $goods_list=stock_in();
 	 $a=$goods_list['goods'];
@@ -87,11 +78,11 @@ if($_REQUEST['act'] == 'stock_in')
 	 $smarty->assign('record_count', $goods_list['record_count']);
 	 $smarty->assign('page_count',   $goods_list['page_count']);
 	 $smarty->assign('cat_list',     cat_list(0, $cat_id));//搜索所有分类
-	 $smarty->assign('brand_list',   get_brand_list());//搜索所有品牌	
-	 /* 显示商品信息页面 */
-	 assign_query_info();	 
-	 $smarty->display("stock_in.htm");
+	 $smarty->assign('brand_list',   get_brand_list());//搜索所有品牌
 	
+	 /* 显示商品信息页面 */
+	 assign_query_info();
+	 $smarty->display("stock_in.htm");
 }
 
 /*------------------------------------------------------ */
@@ -100,7 +91,6 @@ if($_REQUEST['act'] == 'stock_in')
 elseif ($_REQUEST['act'] == 'query')
 {
 	$stock_in = stock_in();
-	$smarty->assign('goods_time',   $stock_in['goods_time']);
 	$smarty->assign('goods_list',   $stock_in['goods']);
 	$smarty->assign('filter',       $stock_in['filter']);
 	$smarty->assign('record_count', $stock_in['record_count']);
@@ -215,7 +205,7 @@ function stock_in()
 		/* 分页大小 */
 		$filter = page_and_size($filter);
 
-		$sql = "SELECT goods_id, goods_name, goods_type, goods_sn, shop_price, is_on_sale, is_best, is_new, is_hot, sort_order, goods_number, " .
+		$sql = "SELECT goods_id, goods_name, goods_type, goods_sn, shop_price, is_on_sale, is_best, is_new, is_hot, sort_order, goods_number, integral, " .
 				" (promote_price > 0 AND promote_start_date <= '$today' AND promote_end_date >= '$today') AS is_promote ".
 				" FROM " . $GLOBALS['ecs']->table('goods') . " AS g WHERE is_delete='$is_delete' $where" .
 				" ORDER BY $filter[sort_by] $filter[sort_order] ".
@@ -223,8 +213,6 @@ function stock_in()
 
 		$filter['keyword'] = stripslashes($filter['keyword']);
 		set_filter($filter, $sql, $param_str);
-		
-		
 	}
 	else
 	{
@@ -232,14 +220,7 @@ function stock_in()
 		$filter = $result['filter'];
 	}
 	$row = $GLOBALS['db']->getAll($sql);
-	//print_r($row);
-	foreach ($row as $key => $value)
-	{
-		$time="select max(goods_time) from " .$GLOBALS['ecs']->table('stock_change'). " where goods_id =".$value['goods_id']."";
-		$time1=$GLOBALS['db'] -> getOne($time);
-		$time1=date('Y-m-d H:i:s',$time1);
-		$row[$key]['goods_time'] = $time1;
-	}
+
 	return array('goods' => $row, 'filter' => $filter, 'page_count' => $filter['page_count'], 'record_count' => $filter['record_count']);
 }
 ?>
