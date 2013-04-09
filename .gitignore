@@ -171,5 +171,7 @@ mobile/
 temp/
 themes/default_old/
 data/
-
+languages/en_us
+languages/zh_tw
+*.*
 
