@@ -189,7 +189,6 @@ function limitvalue(){
           	<td>
           	<select name="sale_return_able_date" id="sale_return_able_date">
 	          	<option value="0">{$lang.please_choose}</option>
-
 	          	<option value="oneweek" {if $goods.sale_return_able_date eq 'oneweek'}selected = "selected"{/if}> &nbsp; {$lang.return_able_date_oneweek}</option>
 	          	<option value="onemonth" {if $goods.sale_return_able_date eq 'onemonth'}selected = "selected"{/if}> &nbsp; {$lang.return_able_date_onemonth}</option>
 	          	<option value="threemonths" {if $goods.sale_return_able_date eq 'threemonths'}selected = "selected"{/if}> &nbsp; {$lang.return_able_date_threemonths}</option>
@@ -286,12 +285,19 @@ function limitvalue(){
           {if $cfg.use_storage}
           <tr>
             <td class="label"><a href="javascript:showNotice('noticeStorage');" title="{$lang.form_notice}"><img src="images/notice.gif" width="16" height="16" border="0" alt="{$lang.form_notice}"></a> {$lang.lab_goods_number}</td>
+
+
+<!--            <td><input type="text" name="goods_number" value="{$goods.goods_number}" size="20" {if $code neq '' || $goods._attribute neq ''}readonly="readonly"{/if} /><br />-->
+           <!-- <td><span>{$goods.goods_number}</span><br />-->
           
-            <td><span>{$goods.goods_number}<input type="hidden" name="goods_number" value="{$goods.goods_number}"/></span><br />
+          <!--  <td><span>{$goods.goods_number}<input type="hidden" name="goods_number" value="{$goods.goods_number}"/></span><br />-->
 
 <!--            <td><input type="text" name="goods_number" value="{$goods.goods_number}" size="20" {if $code neq '' || $goods._attribute neq ''}readonly="readonly"{/if} /><br />-->
            <!--  <td><span>{$goods.goods_number}</span><br /> -->
 
+
+<!--            <td><input type="text" name="goods_number" value="{$goods.goods_number}" size="20" {if $code neq '' || $goods._attribute neq ''}readonly="readonly"{/if} /><br />-->
+            <td><span>{$goods.goods_number}</span><br />
             </td>
           </tr>
           <tr>
@@ -645,7 +651,6 @@ function limitvalue(){
 
     computePrice('give_integral', integralPercent / 1);
     computePrice('rank_integral', integralPercent / 1);
-
     computePrice('integral', integralPercent / 100);
     {/literal}
     {foreach from=$user_rank_list item=item}

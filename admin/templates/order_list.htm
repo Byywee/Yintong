@@ -61,6 +61,10 @@
       <br />
       <a href="javascript:;" onclick="listTable.remove({$order.order_id}, remove_confirm, 'remove_order')">{$lang.remove}</a>
       {/if}
+	 <a href="order.php?act=info&order_id={$order.order_id}">{$lang.detail}</a>
+     {if $order.can_remove}
+     <br /><a href="javascript:;" onclick="listTable.remove({$order.order_id}, remove_confirm, 'remove_order')">{$lang.remove}</a>
+     {/if}
     </td>
   </tr>
   {/foreach}
