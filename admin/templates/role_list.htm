@@ -13,8 +13,7 @@
     <th>{$lang.role_describe}</th>
     <th>{$lang.handler}</th>
   </tr>
-  <form action="role.php?act=query&download=download" method="post">
-  {foreach from=$admin_list item=list key=key}
+  {foreach from=$admin_list item=list}
   <tr>
     <td class="first-cell" >{$list.role_name}</td>
     <td class="first-cell" >{$list.role_describe}</td>
@@ -23,10 +22,6 @@
       <a href="javascript:;" onclick="listTable.remove({$list.role_id}, '{$lang.drop_confirm}')" title="{$lang.remove}"><img src="images/icon_drop.gif" border="0" height="16" width="16"></a></td>
   </tr>
   {/foreach}
-  <tr>
-  		<td align="left" colspan="3"><input type="submit" value="下载数据" class="button"></td>
-  </tr>
-  </form>
 </table>
 
 {if $full_page}

@@ -31,7 +31,7 @@ if($_REQUEST['act'] == 'stock_out')
 		$date = time();
 		$goods_id = $_REQUEST['goods_id'];
 		$out_stock = $_REQUEST['out_stock'];
-		$out_stock1 ="update " .$ecs->table('goods'). " set goods_number = goods_number - $out_stock where goods_id ='$goods_id' ";
+		$out_stock1 ="update " .$ecs->table('goods'). " set goods_number = goods_number + $out_stock where goods_id ='$goods_id' ";
 		$out_stock2 ="insert into " .$ecs->table('stock_change')." (goods_id,goods_stock_num,goods_time,goods_op_type) values($goods_id,$out_stock,$date,4)	";
 		if($goods_id!=0&&$out_stock!=0)
 		{
@@ -51,7 +51,7 @@ if($_REQUEST['act'] == 'stock_out')
 		}
 		foreach ($goods_id as $key=>$value)
 		{
-			$out_stock1 ="update " .$ecs->table('goods'). " set goods_number = goods_number - $out_stock[$key] where goods_id ='$goods_id[$key]' ";				
+			$out_stock1 ="update " .$ecs->table('goods'). " set goods_number = goods_number + $out_stock[$key] where goods_id ='$goods_id[$key]' ";				
 			$out_stock2 ="insert into " .$ecs->table('stock_change')." (goods_id,goods_stock_num,goods_time,goods_op_type) values($goods_id[$key],$out_stock[$key],$date,4)";
 			if($out_stock[$key]!="")
 			{
@@ -59,6 +59,10 @@ if($_REQUEST['act'] == 'stock_out')
 				$db -> query($out_stock2);
 			}
 		}
+		$link[0]['text'] = $_LANG['go_back'];
+		$link[0]['href'] = 'stock_out.php?act=stock_out';
+		
+		sys_msg( $_LANG['batch_stock_out_ok'] , 0, $link);
 	}
 	$goods_list=stock_out();
 	$a=$goods_list['goods'];
@@ -74,11 +78,9 @@ if($_REQUEST['act'] == 'stock_out')
 	$smarty->assign('goods_list',   $goods_list['goods']);
 	$smarty->assign('filter',       $goods_list['filter']);
 	$smarty->assign('record_count', $goods_list['record_count']);
-	$smarty->assign('page_count',   $goods_list['page_count']);
-	 
+	$smarty->assign('page_count',   $goods_list['page_count']);	 
 	$smarty->assign('cat_list',     cat_list(0, $cat_id));//搜索所有分类
-	$smarty->assign('brand_list',   get_brand_list());//搜索所有品牌
-	
+	$smarty->assign('brand_list',   get_brand_list());//搜索所有品牌	
 	assign_query_info();
 	$smarty->display("stock_out.htm");
 }
@@ -220,7 +222,14 @@ function stock_out()
 		$filter = $result['filter'];
 	}
 	$row = $GLOBALS['db']->getAll($sql);
-
+	 
+	foreach ($row as $key => $value)
+	{
+		$time="select max(goods_time) from " .$GLOBALS['ecs']->table('stock_change'). " where goods_id =".$value['goods_id']."";
+		$time1=$GLOBALS['db'] -> getOne($time);
+		$time1=date('Y-m-d H:i:s',$time1);
+		$row[$key]['goods_time'] = $time1;
+	}
 	return array('goods' => $row, 'filter' => $filter, 'page_count' => $filter['page_count'], 'record_count' => $filter['record_count']);
 }
 ?>
