@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ECSHOP 商品详情
+ * ECSHOP 管理中心起始页语言文件
  * ============================================================================
  * * 版权所有 2005-2012 上海商派网络科技有限公司，并保留所有权利。
  * 网站地址: http://www.ecshop.com；
@@ -13,613 +13,279 @@
  * $Id: goods.php 17217 2011-01-19 06:29:08Z liubo $
 */
 
-define('IN_ECS', true);
-
-require(dirname(__FILE__) . '/includes/init.php');
-
-if ((DEBUG_MODE & 2) != 2)
-{
-    $smarty->caching = true;
-}
-
-$affiliate = unserialize($GLOBALS['_CFG']['affiliate']);
-$smarty->assign('affiliate', $affiliate);
+$_LANG['edit_goods'] = '编辑商品信息';
+$_LANG['copy_goods'] = '复制商品信息';
+$_LANG['continue_add_goods'] = '继续添加新商品';
+$_LANG['back_goods_list'] = '返回商品列表';
+$_LANG['add_goods_ok'] = '添加商品成功。';
+$_LANG['edit_goods_ok'] = '编辑商品成功。';
+$_LANG['trash_goods_ok'] = '把商品放入回收站成功。';
+$_LANG['restore_goods_ok'] = '还原商品成功。';
+$_LANG['drop_goods_ok'] = '删除商品成功。';
+$_LANG['batch_handle_ok'] = '批量操作成功。';
+$_LANG['drop_goods_confirm'] = '您确实要删除该商品吗？';
+$_LANG['batch_drop_confirm'] = '彻底删除商品将删除与该商品有关的所有信息。\n您确实要删除选中的商品吗？';
+$_LANG['trash_goods_confirm'] = '您确实要把该商品放入回收站吗？';
+$_LANG['trash_product_confirm'] = '您确实要把该货品删除吗？';
+$_LANG['batch_trash_confirm'] = '您确实要把选中的商品放入回收站吗？';
+$_LANG['restore_goods_confirm'] = '您确实要把该商品还原吗？';
+$_LANG['batch_restore_confirm'] = '您确实要把选中的商品还原吗？';
+$_LANG['batch_on_sale_confirm'] = '您确实要把选中的商品上架吗？';
+$_LANG['batch_not_on_sale_confirm'] = '您确实要把选中的商品下架吗？';
+$_LANG['batch_best_confirm'] = '您确实要把选中的商品设为精品吗？';
+$_LANG['batch_not_best_confirm'] = '您确实要把选中的商品取消精品吗？';
+$_LANG['batch_new_confirm'] = '您确实要把选中的商品设为新品吗？';
+$_LANG['batch_not_new_confirm'] = '您确实要把选中的商品取消新品吗？';
+$_LANG['batch_hot_confirm'] = '您确实要把选中的商品设为热销吗？';
+$_LANG['batch_not_hot_confirm'] = '您确实要把选中的商品取消热销吗？';
+$_LANG['cannot_found_goods'] = '找不到指定的商品。';
+$_LANG['sel_goods_type'] = '请选择商品类型';
+$_LANG['sel_goods_suppliers'] = '请选择供货商';
+/*------------------------------------------------------ */
+//-- 图片处理相关提示信息
+/*------------------------------------------------------ */
+$_LANG['no_gd'] = '您的服务器不支持 GD 或者没有安装处理该图片类型的扩展库。';
+$_LANG['img_not_exists'] = '没有找到原始图片，创建缩略图失败。';
+$_LANG['img_invalid'] = '创建缩略图失败，因为您上传了一个无效的图片文件。';
+$_LANG['create_dir_failed'] = 'images 文件夹不可写，创建缩略图失败。';
+$_LANG['safe_mode_warning'] = '您的服务器运行在安全模式下，而且 %s 目录不存在。您可能需要先行创建该目录才能上传图片。';
+$_LANG['not_writable_warning'] = '目录 %s 不可写，您需要把该目录设为可写才能上传图片。';
 
 /*------------------------------------------------------ */
-//-- INPUT
+//-- 商品列表
 /*------------------------------------------------------ */
+$_LANG['goods_cat'] = '所有分类';
+$_LANG['goods_brand'] = '所有品牌';
+$_LANG['intro_type'] = '全部';
+$_LANG['keyword'] = '关键字';
+$_LANG['is_best'] = '精品';
+$_LANG['is_new'] = '新品';
+$_LANG['is_hot'] = '热销';
+$_LANG['is_promote'] = '特价';
+$_LANG['all_type'] = '全部推荐';
+$_LANG['sort_order'] = '推荐排序';
 
-$goods_id = isset($_REQUEST['id'])  ? intval($_REQUEST['id']) : 0;
+$_LANG['goods_name'] = '商品名称';
+$_LANG['goods_sn'] = '货号';
+$_LANG['shop_price'] = '价格';
+$_LANG['is_on_sale'] = '上架';
+$_LANG['goods_number'] = '库存';
 
-/*------------------------------------------------------ */
-//-- 改变属性、数量时重新计算商品价格
-/*------------------------------------------------------ */
+$_LANG['copy'] = '复制';
+$_LANG['item_list'] = '货品列表';
 
-if (!empty($_REQUEST['act']) && $_REQUEST['act'] == 'price')
-{
-    include('includes/cls_json.php');
+$_LANG['integral'] = '积分额度';
+$_LANG['on_sale'] = '上架';
+$_LANG['not_on_sale'] = '下架';
+$_LANG['best'] = '精品';
+$_LANG['not_best'] = '取消精品';
+$_LANG['new'] = '新品';
+$_LANG['not_new'] = '取消新品';
+$_LANG['hot'] = '热销';
+$_LANG['not_hot'] = '取消热销';
+$_LANG['move_to'] = '转移到分类';
 
-    $json   = new JSON;
-    $res    = array('err_msg' => '', 'result' => '', 'qty' => 1);
-
-    $attr_id    = isset($_REQUEST['attr']) ? explode(',', $_REQUEST['attr']) : array();
-    $number     = (isset($_REQUEST['number'])) ? intval($_REQUEST['number']) : 1;
-
-    if ($goods_id == 0)
-    {
-        $res['err_msg'] = $_LANG['err_change_attr'];
-        $res['err_no']  = 1;
-    }
-    else
-    {
-        if ($number == 0)
-        {
-            $res['qty'] = $number = 1;
-        }
-        else
-        {
-            $res['qty'] = $number;
-        }
-
-        $shop_price  = get_final_price($goods_id, $number, true, $attr_id);
-        $res['result'] = price_format($shop_price * $number);
-    }
-
-    die($json->encode($res));
-}
-
+// ajax
+$_LANG['goods_name_null'] = '请输入商品名称';
+$_LANG['goods_sn_null'] = '请输入货号';
+$_LANG['shop_price_not_number'] = '价格不是数字';
+$_LANG['shop_price_invalid'] = '您输入了一个非法的市场价格。';
+$_LANG['goods_sn_exists'] = '您输入的货号已存在，请换一个';
 
 /*------------------------------------------------------ */
-//-- 商品购买记录ajax处理
+//-- 添加/编辑商品信息
 /*------------------------------------------------------ */
+$_LANG['tab_general'] = '通用信息';
+$_LANG['tab_detail'] = '详细描述';
+$_LANG['tab_mix'] = '其他信息';
+$_LANG['tab_properties'] = '商品属性';
+$_LANG['tab_gallery'] = '商品相册';
+$_LANG['tab_linkgoods'] = '关联商品';
+$_LANG['tab_groupgoods'] = '配件';
+$_LANG['tab_article'] = '关联文章';
 
-if (!empty($_REQUEST['act']) && $_REQUEST['act'] == 'gotopage')
-{
-    include('includes/cls_json.php');
+$_LANG['lab_goods_name'] = '商品名称：';
+$_LANG['lab_goods_sn'] = '商品货号：';
+$_LANG['lab_goods_cat'] = '商品分类：';
+$_LANG['lab_other_cat'] = '扩展分类：';
+$_LANG['lab_goods_brand'] = '商品品牌：';
+$_LANG['lab_shop_price'] = '本店售价：';
+$_LANG['lab_market_price'] = '市场售价：';
+$_LANG['lab_user_price'] = '会员价格：';
+$_LANG['lab_promote_price'] = '促销价：';
+$_LANG['lab_promote_date'] = '促销日期：';
+$_LANG['lab_picture'] = '上传商品图片：';
+$_LANG['lab_thumb'] = '上传商品缩略图：';
+$_LANG['auto_thumb'] = '自动生成商品缩略图';
+$_LANG['lab_keywords'] = '商品关键词：';
+$_LANG['lab_goods_brief'] = '商品简单描述：';
+$_LANG['lab_seller_note'] = '商家备注：';
+$_LANG['lab_goods_type'] = '商品类型：';
+$_LANG['lab_picture_url'] = '商品图片外部URL';
+$_LANG['lab_thumb_url'] = '商品缩略图外部URL';
 
-    $json   = new JSON;
-    $res    = array('err_msg' => '', 'result' => '');
+$_LANG['lab_goods_weight'] = '商品重量：';
+$_LANG['unit_g'] = '克';
+$_LANG['unit_kg'] = '千克';
+$_LANG['lab_goods_number'] = '商品库存数量：';
+$_LANG['lab_warn_number'] = '库存警告数量：';
+$_LANG['lab_integral'] = '积分购买金额：';
+$_LANG['lab_give_integral'] = '赠送消费积分数：';
+$_LANG['lab_rank_integral'] = '赠送等级积分数：';
+$_LANG['lab_intro'] = '加入推荐：';
+$_LANG['lab_is_on_sale'] = '上架：';
+$_LANG['lab_is_alone_sale'] = '能作为普通商品销售：';
+$_LANG['lab_is_free_shipping'] = '是否为免运费商品';
 
-    $goods_id   = isset($_REQUEST['id']) ? intval($_REQUEST['id']) : 0;
-    $page    = (isset($_REQUEST['page'])) ? intval($_REQUEST['page']) : 1;
+$_LANG['compute_by_mp'] = '按市场价计算';
 
-    if (!empty($goods_id))
-    {
-        $need_cache = $GLOBALS['smarty']->caching;
-        $need_compile = $GLOBALS['smarty']->force_compile;
+$_LANG['notice_goods_sn'] = '如果您不输入商品货号，系统将自动生成一个唯一的货号。';
+$_LANG['notice_integral'] = '(此处需填写金额)购买该商品时最多可以使用积分的金额';
+$_LANG['notice_give_integral'] = '购买该商品时赠送消费积分数,-1表示按商品价格赠送,你还可以按照百分比赠送积分';
+$_LANG['notice_rank_integral'] = '购买该商品时赠送等级积分数,-1表示按商品价格赠送,你还可以按照百分比赠送积分';
+$_LANG['notice_seller_note'] = '仅供商家自己看的信息';
+$_LANG['notice_storage'] = '库存在商品为虚货或商品存在货品时为不可编辑状态，库存数值取决于其虚货数量或货品数量';
+$_LANG['notice_keywords'] = '用空格分隔';
+$_LANG['notice_user_price'] = '会员价格为-1时表示会员价格按会员等级折扣率计算。你也可以为每个等级指定一个固定价格';
+$_LANG['notice_goods_type'] = '请选择商品的所属类型，进而完善此商品的属性';
 
-        $GLOBALS['smarty']->caching = false;
-        $GLOBALS['smarty']->force_compile = true;
+$_LANG['on_sale_desc'] = '打勾表示允许销售，否则不允许销售。';
+$_LANG['alone_sale'] = '打勾表示能作为普通商品销售，否则只能作为配件或赠品销售。';
+$_LANG['free_shipping'] = '打勾表示此商品不会产生运费花销，否则按照正常运费计算。';
 
-        /* 商品购买记录 */
-        $sql = 'SELECT u.user_name, og.goods_number, oi.add_time, IF(oi.order_status IN (2, 3, 4), 0, 1) AS order_status ' .
-               'FROM ' . $ecs->table('order_info') . ' AS oi LEFT JOIN ' . $ecs->table('users') . ' AS u ON oi.user_id = u.user_id, ' . $ecs->table('order_goods') . ' AS og ' .
-               'WHERE oi.order_id = og.order_id AND ' . time() . ' - oi.add_time < 2592000 AND og.goods_id = ' . $goods_id . ' ORDER BY oi.add_time DESC LIMIT ' . (($page > 1) ? ($page-1) : 0) * 5 . ',5';
-        $bought_notes = $db->getAll($sql);
+$_LANG['invalid_goods_img'] = '商品图片格式不正确！';
+$_LANG['invalid_goods_thumb'] = '商品缩略图格式不正确！';
+$_LANG['invalid_img_url'] = '商品相册中第%s个图片格式不正确!';
 
-        foreach ($bought_notes as $key => $val)
-        {
-            $bought_notes[$key]['add_time'] = local_date("Y-m-d G:i:s", $val['add_time']);
-        }
+$_LANG['goods_img_too_big'] = '商品图片文件太大了（最大值：%s），无法上传。';
+$_LANG['goods_thumb_too_big'] = '商品缩略图文件太大了（最大值：%s），无法上传。';
+$_LANG['img_url_too_big'] = '商品相册中第%s个图片文件太大了（最大值：%s），无法上传。';
 
-        $sql = 'SELECT count(*) ' .
-               'FROM ' . $ecs->table('order_info') . ' AS oi LEFT JOIN ' . $ecs->table('users') . ' AS u ON oi.user_id = u.user_id, ' . $ecs->table('order_goods') . ' AS og ' .
-               'WHERE oi.order_id = og.order_id AND ' . time() . ' - oi.add_time < 2592000 AND og.goods_id = ' . $goods_id;
-        $count = $db->getOne($sql);
+$_LANG['integral_market_price'] = '取整数';
+$_LANG['upload_images'] = '上传图片';
+$_LANG['spec_price'] = '属性价格';
+$_LANG['drop_img_confirm'] = '您确实要删除该图片吗？';
 
+$_LANG['select_font'] = '字体样式';
+$_LANG['font_styles'] = array('strong' => '加粗', 'em' => '斜体', 'u' => '下划线', 'strike' => '删除线');
 
-        /* 商品购买记录分页样式 */
-        $pager = array();
-        $pager['page']         = $page;
-        $pager['size']         = $size = 5;
-        $pager['record_count'] = $count;
-        $pager['page_count']   = $page_count = ($count > 0) ? intval(ceil($count / $size)) : 1;;
-        $pager['page_first']   = "javascript:gotoBuyPage(1,$goods_id)";
-        $pager['page_prev']    = $page > 1 ? "javascript:gotoBuyPage(" .($page-1). ",$goods_id)" : 'javascript:;';
-        $pager['page_next']    = $page < $page_count ? 'javascript:gotoBuyPage(' .($page + 1) . ",$goods_id)" : 'javascript:;';
-        $pager['page_last']    = $page < $page_count ? 'javascript:gotoBuyPage(' .$page_count. ",$goods_id)"  : 'javascript:;';
+$_LANG['rapid_add_cat'] = '添加分类';
+$_LANG['rapid_add_brand'] = '添加品牌';
+$_LANG['category_manage'] = '分类管理';
+$_LANG['brand_manage'] = '品牌管理';
+$_LANG['hide'] = '隐藏';
 
-        $smarty->assign('notes', $bought_notes);
-        $smarty->assign('pager', $pager);
+$_LANG['lab_volume_price']         = '商品优惠价格：';
+$_LANG['volume_number']            = '优惠数量';
+$_LANG['volume_price']             = '优惠价格';
+$_LANG['notice_volume_price']      = '购买数量达到优惠数量时享受的优惠价格';
+$_LANG['volume_number_continuous'] = '优惠数量重复！';
 
-
-        $res['result'] = $GLOBALS['smarty']->fetch('library/bought_notes.lbi');
-
-        $GLOBALS['smarty']->caching = $need_cache;
-        $GLOBALS['smarty']->force_compile = $need_compile;
-    }
-
-    die($json->encode($res));
-}
-
-
-/*------------------------------------------------------ */
-//-- PROCESSOR
-/*------------------------------------------------------ */
-
-$cache_id = $goods_id . '-' . $_SESSION['user_rank'].'-'.$_CFG['lang'];
-$cache_id = sprintf('%X', crc32($cache_id));
-if (!$smarty->is_cached('goods.dwt', $cache_id))
-{
-    $smarty->assign('image_width',  $_CFG['image_width']);
-    $smarty->assign('image_height', $_CFG['image_height']);
-    $smarty->assign('helps',        get_shop_help()); // 网店帮助
-    $smarty->assign('id',           $goods_id);
-    $smarty->assign('type',         0);
-    $smarty->assign('cfg',          $_CFG);
-    $smarty->assign('promotion',       get_promotion_info($goods_id));//促销信息
-    $smarty->assign('promotion_info', get_promotion_info());
-
-    /* 获得商品的信息 */
-    $goods = get_goods_info($goods_id);
-
-    if ($goods === false)
-    {
-        /* 如果没有找到任何记录则跳回到首页 */
-        ecs_header("Location: ./\n");
-        exit;
-    }
-    else
-    {
-        if ($goods['brand_id'] > 0)
-        {
-            $goods['goods_brand_url'] = build_uri('brand', array('bid'=>$goods['brand_id']), $goods['goods_brand']);
-        }
-
-        $shop_price   = $goods['shop_price'];
-        $linked_goods = get_linked_goods($goods_id);
-
-        $goods['goods_style_name'] = add_style($goods['goods_name'], $goods['goods_name_style']);
-
-        /* 购买该商品可以得到多少钱的红包 */
-        if ($goods['bonus_type_id'] > 0)
-        {
-            $time = gmtime();
-            $sql = "SELECT type_money FROM " . $ecs->table('bonus_type') .
-                    " WHERE type_id = '$goods[bonus_type_id]' " .
-                    " AND send_type = '" . SEND_BY_GOODS . "' " .
-                    " AND send_start_date <= '$time'" .
-                    " AND send_end_date >= '$time'";
-            $goods['bonus_money'] = floatval($db->getOne($sql));
-            if ($goods['bonus_money'] > 0)
-            {
-                $goods['bonus_money'] = price_format($goods['bonus_money']);
-            }
-        }
-
-        $smarty->assign('goods',              $goods);
-        $smarty->assign('goods_id',           $goods['goods_id']);
-        $smarty->assign('promote_end_time',   $goods['gmt_end_time']);
-        $smarty->assign('categories',         get_categories_tree($goods['cat_id']));  // 分类树
-
-        /* meta */
-        $smarty->assign('keywords',           htmlspecialchars($goods['keywords']));
-        $smarty->assign('description',        htmlspecialchars($goods['goods_brief']));
-
-
-        $catlist = array();
-        foreach(get_parent_cats($goods['cat_id']) as $k=>$v)
-        {
-            $catlist[] = $v['cat_id'];
-        }
-
-        assign_template('c', $catlist);
-
-         /* 上一个商品下一个商品 */
-        $prev_gid = $db->getOne("SELECT goods_id FROM " .$ecs->table('goods'). " WHERE cat_id=" . $goods['cat_id'] . " AND goods_id > " . $goods['goods_id'] . " AND is_on_sale = 1 AND is_alone_sale = 1 AND is_delete = 0 LIMIT 1");
-        if (!empty($prev_gid))
-        {
-            $prev_good['url'] = build_uri('goods', array('gid' => $prev_gid), $goods['goods_name']);
-            $smarty->assign('prev_good', $prev_good);//上一个商品
-        }
-
-        $next_gid = $db->getOne("SELECT max(goods_id) FROM " . $ecs->table('goods') . " WHERE cat_id=".$goods['cat_id']." AND goods_id < ".$goods['goods_id'] . " AND is_on_sale = 1 AND is_alone_sale = 1 AND is_delete = 0");
-        if (!empty($next_gid))
-        {
-            $next_good['url'] = build_uri('goods', array('gid' => $next_gid), $goods['goods_name']);
-            $smarty->assign('next_good', $next_good);//下一个商品
-        }
-
-        $position = assign_ur_here($goods['cat_id'], $goods['goods_name']);
-
-        /* current position */
-        $smarty->assign('page_title',          $position['title']);                    // 页面标题
-        $smarty->assign('ur_here',             $position['ur_here']);                  // 当前位置
-
-        $properties = get_goods_properties($goods_id);  // 获得商品的规格和属性
-
-        $smarty->assign('properties',          $properties['pro']);                              // 商品属性
-        $smarty->assign('specification',       $properties['spe']);                              // 商品规格
-        $smarty->assign('attribute_linked',    get_same_attribute_goods($properties));           // 相同属性的关联商品
-        $smarty->assign('related_goods',       $linked_goods);                                   // 关联商品
-        $smarty->assign('goods_article_list',  get_linked_articles($goods_id));                  // 关联文章
-        $smarty->assign('fittings',            get_goods_fittings(array($goods_id)));                   // 配件
-        $smarty->assign('rank_prices',         get_user_rank_prices($goods_id, $shop_price));    // 会员等级价格
-        $smarty->assign('pictures',            get_goods_gallery($goods_id));                    // 商品相册
-        $smarty->assign('bought_goods',        get_also_bought($goods_id));                      // 购买了该商品的用户还购买了哪些商品
-        $smarty->assign('goods_rank',          get_goods_rank($goods_id));                       // 商品的销售排名
-
-        //获取tag
-        $tag_array = get_tags($goods_id);
-        $smarty->assign('tags',                $tag_array);                                       // 商品的标记
-
-        //获取关联礼包
-        $package_goods_list = get_package_goods_list($goods['goods_id']);
-        $smarty->assign('package_goods_list',$package_goods_list);    // 获取关联礼包
-
-        assign_dynamic('goods');
-        $volume_price_list = get_volume_price_list($goods['goods_id'], '1');
-        $smarty->assign('volume_price_list',$volume_price_list);    // 商品优惠价格区间
-    }
-}
-
-/* 记录浏览历史 */
-if (!empty($_COOKIE['ECS']['history']))
-{
-    $history = explode(',', $_COOKIE['ECS']['history']);
-
-    array_unshift($history, $goods_id);
-    $history = array_unique($history);
-
-    while (count($history) > $_CFG['history_number'])
-    {
-        array_pop($history);
-    }
-
-    setcookie('ECS[history]', implode(',', $history), gmtime() + 3600 * 24 * 30);
-}
-else
-{
-    setcookie('ECS[history]', $goods_id, gmtime() + 3600 * 24 * 30);
-}
-
-
-/* 更新点击次数 */
-$db->query('UPDATE ' . $ecs->table('goods') . " SET click_count = click_count + 1 WHERE goods_id = '$_REQUEST[id]'");
-
-$smarty->assign('now_time',  gmtime());           // 当前系统时间
-$smarty->display('goods.dwt',      $cache_id);
+$_LANG['label_suppliers']          = '选择供货商：';
+$_LANG['suppliers_no']             = '不指定供货商属于本店商品';
+$_LANG['suppliers_move_to']        = '转移到供货商';
+$_LANG['lab_to_shopex']         = '转移到网店';
 
 /*------------------------------------------------------ */
-//-- PRIVATE FUNCTION
+//-- 关联商品
 /*------------------------------------------------------ */
 
-/**
- * 获得指定商品的关联商品
- *
- * @access  public
- * @param   integer     $goods_id
- * @return  array
- */
-function get_linked_goods($goods_id)
-{
-    $sql = 'SELECT g.goods_id, g.goods_name, g.goods_thumb, g.goods_img, g.shop_price AS org_price, ' .
-                "IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS shop_price, ".
-                'g.market_price, g.promote_price, g.promote_start_date, g.promote_end_date ' .
-            'FROM ' . $GLOBALS['ecs']->table('link_goods') . ' lg ' .
-            'LEFT JOIN ' . $GLOBALS['ecs']->table('goods') . ' AS g ON g.goods_id = lg.link_goods_id ' .
-            "LEFT JOIN " . $GLOBALS['ecs']->table('member_price') . " AS mp ".
-                    "ON mp.goods_id = g.goods_id AND mp.user_rank = '$_SESSION[user_rank]' ".
-            "WHERE lg.goods_id = '$goods_id' AND g.is_on_sale = 1 AND g.is_alone_sale = 1 AND g.is_delete = 0 ".
-            "LIMIT " . $GLOBALS['_CFG']['related_goods_number'];
-    $res = $GLOBALS['db']->query($sql);
+$_LANG['all_goods'] = '可选商品';
+$_LANG['link_goods'] = '跟该商品关联的商品';
+$_LANG['single'] = '单向关联';
+$_LANG['double'] = '双向关联';
+$_LANG['all_article'] = '可选文章';
+$_LANG['goods_article'] = '跟该商品关联的文章';
+$_LANG['top_cat'] = '顶级分类';
 
-    $arr = array();
-    while ($row = $GLOBALS['db']->fetchRow($res))
-    {
-        $arr[$row['goods_id']]['goods_id']     = $row['goods_id'];
-        $arr[$row['goods_id']]['goods_name']   = $row['goods_name'];
-        $arr[$row['goods_id']]['short_name']   = $GLOBALS['_CFG']['goods_name_length'] > 0 ?
-            sub_str($row['goods_name'], $GLOBALS['_CFG']['goods_name_length']) : $row['goods_name'];
-        $arr[$row['goods_id']]['goods_thumb']  = get_image_path($row['goods_id'], $row['goods_thumb'], true);
-        $arr[$row['goods_id']]['goods_img']    = get_image_path($row['goods_id'], $row['goods_img']);
-        $arr[$row['goods_id']]['market_price'] = price_format($row['market_price']);
-        $arr[$row['goods_id']]['shop_price']   = price_format($row['shop_price']);
-        $arr[$row['goods_id']]['url']          = build_uri('goods', array('gid'=>$row['goods_id']), $row['goods_name']);
+/*------------------------------------------------------ */
+//-- 组合商品
+/*------------------------------------------------------ */
 
-        if ($row['promote_price'] > 0)
-        {
-            $arr[$row['goods_id']]['promote_price'] = bargain_price($row['promote_price'], $row['promote_start_date'], $row['promote_end_date']);
-            $arr[$row['goods_id']]['formated_promote_price'] = price_format($arr[$row['goods_id']]['promote_price']);
-        }
-        else
-        {
-            $arr[$row['goods_id']]['promote_price'] = 0;
-        }
-    }
+$_LANG['group_goods'] = '该商品的配件';
+$_LANG['price'] = '价格';
 
-    return $arr;
-}
+/*------------------------------------------------------ */
+//-- 商品相册
+/*------------------------------------------------------ */
 
-/**
- * 获得指定商品的关联文章
- *
- * @access  public
- * @param   integer     $goods_id
- * @return  void
- */
-function get_linked_articles($goods_id)
-{
-    $sql = 'SELECT a.article_id, a.title, a.file_url, a.open_type, a.add_time ' .
-            'FROM ' . $GLOBALS['ecs']->table('goods_article') . ' AS g, ' .
-                $GLOBALS['ecs']->table('article') . ' AS a ' .
-            "WHERE g.article_id = a.article_id AND g.goods_id = '$goods_id' AND a.is_open = 1 " .
-            'ORDER BY a.add_time DESC';
-    $res = $GLOBALS['db']->query($sql);
+$_LANG['img_desc'] = '图片描述';
+$_LANG['img_url'] = '上传文件';
+$_LANG['img_file'] = '或者输入外部图片链接地址';
 
-    $arr = array();
-    while ($row = $GLOBALS['db']->fetchRow($res))
-    {
-        $row['url']         = $row['open_type'] != 1 ?
-            build_uri('article', array('aid'=>$row['article_id']), $row['title']) : trim($row['file_url']);
-        $row['add_time']    = local_date($GLOBALS['_CFG']['date_format'], $row['add_time']);
-        $row['short_title'] = $GLOBALS['_CFG']['article_title_length'] > 0 ?
-            sub_str($row['title'], $GLOBALS['_CFG']['article_title_length']) : $row['title'];
+/*------------------------------------------------------ */
+//-- 关联文章
+/*------------------------------------------------------ */
+$_LANG['article_title'] = '文章标题';
 
-        $arr[] = $row;
-    }
+$_LANG['goods_not_exist'] = '该商品不存在';
+$_LANG['goods_not_in_recycle_bin'] = '该商品尚未放入回收站，不能删除';
 
-    return $arr;
-}
+$_LANG['js_languages']['goods_name_not_null'] = '商品名称不能为空。';
+$_LANG['js_languages']['goods_cat_not_null'] = '商品分类必须选择。';
+$_LANG['js_languages']['category_cat_not_null'] = '分类名称不能为空';
+$_LANG['js_languages']['brand_cat_not_null'] = '品牌名称不能为空';
+$_LANG['js_languages']['goods_cat_not_leaf'] = '您选择的商品分类不是底级分类，请选择底级分类。';
+$_LANG['js_languages']['shop_price_not_null'] = '本店售价不能为空。';
+$_LANG['js_languages']['shop_price_not_number'] = '本店售价不是数值。';
 
-/**
- * 获得指定商品的各会员等级对应的价格
- *
- * @access  public
- * @param   integer     $goods_id
- * @return  array
- */
-function get_user_rank_prices($goods_id, $shop_price)
-{
-    $sql = "SELECT rank_id, IFNULL(mp.user_price, r.discount * $shop_price / 100) AS price, r.rank_name, r.discount " .
-            'FROM ' . $GLOBALS['ecs']->table('user_rank') . ' AS r ' .
-            'LEFT JOIN ' . $GLOBALS['ecs']->table('member_price') . " AS mp ".
-                "ON mp.goods_id = '$goods_id' AND mp.user_rank = r.rank_id " .
-            "WHERE r.show_price = 1 OR r.rank_id = '$_SESSION[user_rank]'";
-    $res = $GLOBALS['db']->query($sql);
+$_LANG['js_languages']['select_please'] = '请选择...';
+$_LANG['js_languages']['button_add'] = '添加';
+$_LANG['js_languages']['button_del'] = '删除';
+$_LANG['js_languages']['spec_value_not_null'] = '规格不能为空';
+$_LANG['js_languages']['spec_price_not_number'] = '加价不是数字';
+$_LANG['js_languages']['market_price_not_number'] = '市场价格不是数字';
+$_LANG['js_languages']['goods_number_not_int'] = '商品库存不是整数';
+$_LANG['js_languages']['warn_number_not_int'] = '库存警告不是整数';
+$_LANG['js_languages']['promote_not_lt'] = '促销开始日期不能大于结束日期';
+$_LANG['js_languages']['promote_start_not_null'] = '促销开始时间不能为空';
+$_LANG['js_languages']['promote_end_not_null'] = '促销结束时间不能为空';
 
-    $arr = array();
-    while ($row = $GLOBALS['db']->fetchRow($res))
-    {
+$_LANG['js_languages']['drop_img_confirm'] = '您确实要删除该图片吗？';
+$_LANG['js_languages']['batch_no_on_sale'] = '您确实要将选定的商品下架吗？';
+$_LANG['js_languages']['batch_trash_confirm'] = '您确实要把选中的商品放入回收站吗？';
+$_LANG['js_languages']['go_category_page'] = '本页数据将丢失，确认要去商品分类页添加分类吗？';
+$_LANG['js_languages']['go_brand_page'] = '本页数据将丢失，确认要去商品品牌页添加品牌吗？';
 
-        $arr[$row['rank_id']] = array(
-                        'rank_name' => htmlspecialchars($row['rank_name']),
-                        'price'     => price_format($row['price']));
-    }
+$_LANG['js_languages']['volume_num_not_null'] = '请输入优惠数量';
+$_LANG['js_languages']['volume_num_not_number'] = '优惠数量不是数字';
+$_LANG['js_languages']['volume_price_not_null'] = '请输入优惠价格';
+$_LANG['js_languages']['volume_price_not_number'] = '优惠价格不是数字';
 
-    return $arr;
-}
+$_LANG['js_languages']['cancel_color'] = '无样式';
 
-/**
- * 获得购买过该商品的人还买过的商品
- *
- * @access  public
- * @param   integer     $goods_id
- * @return  array
- */
-function get_also_bought($goods_id)
-{
-    $sql = 'SELECT COUNT(b.goods_id ) AS num, g.goods_id, g.goods_name, g.goods_thumb, g.goods_img, g.shop_price, g.promote_price, g.promote_start_date, g.promote_end_date ' .
-            'FROM ' . $GLOBALS['ecs']->table('order_goods') . ' AS a ' .
-            'LEFT JOIN ' . $GLOBALS['ecs']->table('order_goods') . ' AS b ON b.order_id = a.order_id ' .
-            'LEFT JOIN ' . $GLOBALS['ecs']->table('goods') . ' AS g ON g.goods_id = b.goods_id ' .
-            "WHERE a.goods_id = '$goods_id' AND b.goods_id <> '$goods_id' AND g.is_on_sale = 1 AND g.is_alone_sale = 1 AND g.is_delete = 0 " .
-            'GROUP BY b.goods_id ' .
-            'ORDER BY num DESC ' .
-            'LIMIT ' . $GLOBALS['_CFG']['bought_goods'];
-    $res = $GLOBALS['db']->query($sql);
+/* 虚拟卡 */
+$_LANG['card'] = '查看虚拟卡信息';
+$_LANG['replenish'] = '补货';
+$_LANG['batch_card_add'] = '批量补货';
+$_LANG['add_replenish'] = '添加虚拟卡卡密';
 
-    $key = 0;
-    $arr = array();
-    while ($row = $GLOBALS['db']->fetchRow($res))
-    {
-        $arr[$key]['goods_id']    = $row['goods_id'];
-        $arr[$key]['goods_name']  = $row['goods_name'];
-        $arr[$key]['short_name']  = $GLOBALS['_CFG']['goods_name_length'] > 0 ?
-            sub_str($row['goods_name'], $GLOBALS['_CFG']['goods_name_length']) : $row['goods_name'];
-        $arr[$key]['goods_thumb'] = get_image_path($row['goods_id'], $row['goods_thumb'], true);
-        $arr[$key]['goods_img']   = get_image_path($row['goods_id'], $row['goods_img']);
-        $arr[$key]['shop_price']  = price_format($row['shop_price']);
-        $arr[$key]['url']         = build_uri('goods', array('gid'=>$row['goods_id']), $row['goods_name']);
+$_LANG['goods_number_error'] = '商品库存数量错误';
 
-        if ($row['promote_price'] > 0)
-        {
-            $arr[$key]['promote_price'] = bargain_price($row['promote_price'], $row['promote_start_date'], $row['promote_end_date']);
-            $arr[$key]['formated_promote_price'] = price_format($arr[$key]['promote_price']);
-        }
-        else
-        {
-            $arr[$key]['promote_price'] = 0;
-        }
-
-        $key++;
-    }
-
-    return $arr;
-}
-
-/**
- * 获得指定商品的销售排名
- *
- * @access  public
- * @param   integer     $goods_id
- * @return  integer
- */
-function get_goods_rank($goods_id)
-{
-    /* 统计时间段 */
-    $period = intval($GLOBALS['_CFG']['top10_time']);
-    if ($period == 1) // 一年
-    {
-        $ext = " AND o.add_time > '" . local_strtotime('-1 years') . "'";
-    }
-    elseif ($period == 2) // 半年
-    {
-        $ext = " AND o.add_time > '" . local_strtotime('-6 months') . "'";
-    }
-    elseif ($period == 3) // 三个月
-    {
-        $ext = " AND o.add_time > '" . local_strtotime('-3 months') . "'";
-    }
-    elseif ($period == 4) // 一个月
-    {
-        $ext = " AND o.add_time > '" . local_strtotime('-1 months') . "'";
-    }
-    else
-    {
-        $ext = '';
-    }
-
-    /* 查询该商品销量 */
-    $sql = 'SELECT IFNULL(SUM(g.goods_number), 0) ' .
-        'FROM ' . $GLOBALS['ecs']->table('order_info') . ' AS o, ' .
-            $GLOBALS['ecs']->table('order_goods') . ' AS g ' .
-        "WHERE o.order_id = g.order_id " .
-        "AND o.order_status = '" . OS_CONFIRMED . "' " .
-        "AND o.shipping_status " . db_create_in(array(SS_SHIPPED, SS_RECEIVED)) .
-        " AND o.pay_status " . db_create_in(array(PS_PAYED, PS_PAYING)) .
-        " AND g.goods_id = '$goods_id'" . $ext;
-    $sales_count = $GLOBALS['db']->getOne($sql);
-
-    if ($sales_count > 0)
-    {
-        /* 只有在商品销售量大于0时才去计算该商品的排行 */
-        $sql = 'SELECT DISTINCT SUM(goods_number) AS num ' .
-                'FROM ' . $GLOBALS['ecs']->table('order_info') . ' AS o, ' .
-                    $GLOBALS['ecs']->table('order_goods') . ' AS g ' .
-                "WHERE o.order_id = g.order_id " .
-                "AND o.order_status = '" . OS_CONFIRMED . "' " .
-                "AND o.shipping_status " . db_create_in(array(SS_SHIPPED, SS_RECEIVED)) .
-                " AND o.pay_status " . db_create_in(array(PS_PAYED, PS_PAYING)) . $ext .
-                " GROUP BY g.goods_id HAVING num > $sales_count";
-        $res = $GLOBALS['db']->query($sql);
-
-        $rank = $GLOBALS['db']->num_rows($res) + 1;
-
-        if ($rank > 10)
-        {
-            $rank = 0;
-        }
-    }
-    else
-    {
-        $rank = 0;
-    }
-
-    return $rank;
-}
-
-/**
- * 获得商品选定的属性的附加总价格
- *
- * @param   integer     $goods_id
- * @param   array       $attr
- *
- * @return  void
- */
-function get_attr_amount($goods_id, $attr)
-{
-    $sql = "SELECT SUM(attr_price) FROM " . $GLOBALS['ecs']->table('goods_attr') .
-        " WHERE goods_id='$goods_id' AND " . db_create_in($attr, 'goods_attr_id');
-
-    return $GLOBALS['db']->getOne($sql);
-}
-
-/**
- * 取得跟商品关联的礼包列表
- *
- * @param   string  $goods_id    商品编号
- *
- * @return  礼包列表
- */
-function get_package_goods_list($goods_id)
-{
-    $now = gmtime();
-    $sql = "SELECT pg.goods_id, ga.act_id, ga.act_name, ga.act_desc, ga.goods_name, ga.start_time,
-                   ga.end_time, ga.is_finished, ga.ext_info
-            FROM " . $GLOBALS['ecs']->table('goods_activity') . " AS ga, " . $GLOBALS['ecs']->table('package_goods') . " AS pg
-            WHERE pg.package_id = ga.act_id
-            AND ga.start_time <= '" . $now . "'
-            AND ga.end_time >= '" . $now . "'
-            AND pg.goods_id = " . $goods_id . "
-            GROUP BY ga.act_id
-            ORDER BY ga.act_id ";
-    $res = $GLOBALS['db']->getAll($sql);
-
-    foreach ($res as $tempkey => $value)
-    {
-        $subtotal = 0;
-        $row = unserialize($value['ext_info']);
-        unset($value['ext_info']);
-        if ($row)
-        {
-            foreach ($row as $key=>$val)
-            {
-                $res[$tempkey][$key] = $val;
-            }
-        }
-
-        $sql = "SELECT pg.package_id, pg.goods_id, pg.goods_number, pg.admin_id, p.goods_attr, g.goods_sn, g.goods_name, g.market_price, g.goods_thumb, IFNULL(mp.user_price, g.shop_price * '$_SESSION[discount]') AS rank_price
-                FROM " . $GLOBALS['ecs']->table('package_goods') . " AS pg
-                    LEFT JOIN ". $GLOBALS['ecs']->table('goods') . " AS g
-                        ON g.goods_id = pg.goods_id
-                    LEFT JOIN ". $GLOBALS['ecs']->table('products') . " AS p
-                        ON p.product_id = pg.product_id
-                    LEFT JOIN " . $GLOBALS['ecs']->table('member_price') . " AS mp
-                        ON mp.goods_id = g.goods_id AND mp.user_rank = '$_SESSION[user_rank]'
-                WHERE pg.package_id = " . $value['act_id']. "
-                ORDER BY pg.package_id, pg.goods_id";
-
-        $goods_res = $GLOBALS['db']->getAll($sql);
-
-        foreach($goods_res as $key => $val)
-        {
-            $goods_id_array[] = $val['goods_id'];
-            $goods_res[$key]['goods_thumb']  = get_image_path($val['goods_id'], $val['goods_thumb'], true);
-            $goods_res[$key]['market_price'] = price_format($val['market_price']);
-            $goods_res[$key]['rank_price']   = price_format($val['rank_price']);
-            $subtotal += $val['rank_price'] * $val['goods_number'];
-        }
-
-        /* 取商品属性 */
-        $sql = "SELECT ga.goods_attr_id, ga.attr_value
-                FROM " .$GLOBALS['ecs']->table('goods_attr'). " AS ga, " .$GLOBALS['ecs']->table('attribute'). " AS a
-                WHERE a.attr_id = ga.attr_id
-                AND a.attr_type = 1
-                AND " . db_create_in($goods_id_array, 'goods_id');
-        $result_goods_attr = $GLOBALS['db']->getAll($sql);
-
-        $_goods_attr = array();
-        foreach ($result_goods_attr as $value)
-        {
-            $_goods_attr[$value['goods_attr_id']] = $value['attr_value'];
-        }
-
-        /* 处理货品 */
-        $format = '[%s]';
-        foreach($goods_res as $key => $val)
-        {
-            if ($val['goods_attr'] != '')
-            {
-                $goods_attr_array = explode('|', $val['goods_attr']);
-
-                $goods_attr = array();
-                foreach ($goods_attr_array as $_attr)
-                {
-                    $goods_attr[] = $_goods_attr[$_attr];
-                }
-
-                $goods_res[$key]['goods_attr_str'] = sprintf($format, implode('，', $goods_attr));
-            }
-        }
-
-        $res[$tempkey]['goods_list']    = $goods_res;
-        $res[$tempkey]['subtotal']      = price_format($subtotal);
-        $res[$tempkey]['saving']        = price_format(($subtotal - $res[$tempkey]['package_price']));
-        $res[$tempkey]['package_price'] = price_format($res[$tempkey]['package_price']);
-    }
-
-    return $res;
-}
-
+/*------------------------------------------------------ */
+//-- 货品
+/*------------------------------------------------------ */
+$_LANG['product'] = '货品';
+$_LANG['product_info'] = '货品信息';
+$_LANG['specifications'] = '规格';
+$_LANG['total'] = '合计：';
+$_LANG['add_products'] = '添加货品';
+$_LANG['save_products'] = '保存货品成功';
+$_LANG['product_id_null'] = '货品id为空';
+$_LANG['cannot_found_products'] = '未找到指定货品';
+$_LANG['product_batch_del_success'] = '货品批量删除成功';
+$_LANG['product_batch_del_failure'] = '货品批量删除失败';
+$_LANG['batch_product_add'] = '批量添加';
+$_LANG['batch_product_edit'] = '批量编辑';
+$_LANG['products_title'] = '商品名称：%s';
+$_LANG['products_title_2'] = '货号：%s';
+$_LANG['good_shop_price'] = '（商品价格：%d）';
+$_LANG['good_goods_sn'] = '（商品货号：%s）';
+$_LANG['exist_same_goods_sn'] = '货品货号不允许与产品货号重复';
+$_LANG['exist_same_product_sn'] = '货品货号重复';
+$_LANG['cannot_add_products'] = '货品添加失败';
+$_LANG['exist_same_goods_attr'] = '货品规格属性重复';
+$_LANG['cannot_goods_number'] = '此商品存在货品，不能修改商品库存';
+$_LANG['not_exist_goods_attr'] = '此商品不存在规格，请为其添加规格';
+$_LANG['goods_sn_exists'] = '您输入的货号已存在，请换一个';
 ?>
